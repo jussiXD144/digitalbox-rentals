@@ -1,0 +1,19 @@
+services:
+  # The web service running FastAPI
+  - type: web
+    name: digitalbox-web
+    env: python
+    buildCommand: "pip install -r requirements.txt"
+    startCommand: "uvicorn main:app --host 0.0.0.0 --port $PORT"
+    envVars:
+      - key: DATABASE_URL
+        fromDatabase:
+          name: digitalbox-db
+          property: connectionString
+      - key: PYTHON_VERSION
+        value: 3.11.0
+
+  # The PostgreSQL database
+  - type: psql
+    name: digitalbox-db
+    plan: free

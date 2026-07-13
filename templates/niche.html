@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ page.title }} | DigitalBox</title>
+    <meta name="description" content="{{ page.meta_description }}">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+    </style>
+</head>
+<body class="bg-gray-900 text-white min-h-screen flex flex-col">
+
+    <!-- Header -->
+    <header class="py-6 px-8 border-b border-gray-800 flex justify-between items-center bg-gray-900/80 backdrop-blur-md sticky top-0 z-50">
+        <a href="/" class="flex items-center space-x-3">
+            <div class="w-8 h-8 rounded bg-gradient-to-br from-blue-500 to-emerald-400 flex items-center justify-center font-bold text-lg">D</div>
+            <h1 class="text-xl font-extrabold tracking-tight">DigitalBox</h1>
+        </a>
+        <nav>
+            <a href="/login" class="text-sm font-semibold px-4 py-2 rounded bg-blue-600 hover:bg-blue-500 transition shadow-lg">Jetzt starten</a>
+        </nav>
+    </header>
+
+    <!-- SEO Hero -->
+    <main class="flex-grow flex flex-col items-center justify-center text-center px-4 py-20 relative overflow-hidden">
+        <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-blue-600/10 rounded-full mix-blend-multiply filter blur-[128px] pointer-events-none"></div>
+
+        <div class="max-w-4xl mx-auto relative z-10">
+            <div class="inline-block bg-blue-500/20 text-blue-400 font-bold px-4 py-1.5 rounded-full text-sm mb-6 uppercase tracking-widest border border-blue-500/30">Lösung für {{ page.target_audience }}</div>
+            <h1 class="text-5xl md:text-7xl font-extrabold tracking-tight mb-6 bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-emerald-400">
+                {{ page.h1 }}
+            </h1>
+            <p class="text-xl md:text-2xl text-gray-300 font-medium mb-8">
+                {{ page.subtitle }}
+            </p>
+            <div class="bg-gray-800/50 border border-gray-700 rounded-2xl p-8 mb-16 text-left shadow-2xl backdrop-blur-sm">
+                <p class="text-gray-400 mb-6 text-lg leading-relaxed">{{ page.problem_statement }}</p>
+                
+                <h3 class="text-white font-bold text-xl mb-4">Warum DigitalBox die perfekte Lösung ist:</h3>
+                <ul class="space-y-3">
+                    {% for benefit in benefits %}
+                    <li class="flex items-start">
+                        <svg class="w-6 h-6 text-emerald-400 mr-3 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                        <span class="text-gray-300">{{ benefit }}</span>
+                    </li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+
+        <!-- Call to Action: Pricing -->
+        <h2 class="text-3xl font-bold mb-10 relative z-10">Wähle den passenden Speicher-Tarif:</h2>
+        
+        <div class="w-full max-w-6xl mx-auto grid md:grid-cols-3 gap-8 relative z-10 px-4">
+            
+            <!-- Mini-Box -->
+            <div class="bg-gray-800 rounded-3xl p-8 border border-gray-700 text-left hover:border-gray-500 transition">
+                <h3 class="text-2xl font-bold text-white mb-2">Mini-Box</h3>
+                <div class="mb-6 flex items-end">
+                    <span class="text-4xl font-extrabold text-white">€2.99</span><span class="text-gray-400 ml-2 mb-1">/mo</span>
+                </div>
+                <ul class="text-gray-300 text-sm space-y-4 mb-8">
+                    <li class="flex items-center"><svg class="w-5 h-5 text-emerald-400 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg> <strong>20 GB</strong> inklusive</li>
+                    <li class="flex items-center"><svg class="w-5 h-5 text-emerald-400 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg> 0,05€ pro extra GB</li>
+                </ul>
+                <a href="/login" class="block text-center w-full py-3 rounded-xl bg-gray-700 hover:bg-gray-600 text-white font-semibold transition">Jetzt sichern</a>
+            </div>
+
+            <!-- Medi-Box -->
+            <div class="bg-gray-800 rounded-3xl p-8 border border-blue-500 shadow-2xl shadow-blue-500/20 transform md:-translate-y-4 text-left relative">
+                <div class="absolute top-0 right-0 bg-blue-500 text-white text-xs font-bold px-3 py-1 rounded-bl-lg uppercase">Bestseller</div>
+                <h3 class="text-2xl font-bold text-white mb-2">Medi-Box</h3>
+                <div class="mb-6 flex items-end">
+                    <span class="text-4xl font-extrabold text-white">€6.99</span><span class="text-blue-200 ml-2 mb-1">/mo</span>
+                </div>
+                <ul class="text-gray-200 text-sm space-y-4 mb-8">
+                    <li class="flex items-center"><svg class="w-5 h-5 text-emerald-400 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg> <strong>100 GB</strong> inklusive</li>
+                    <li class="flex items-center"><svg class="w-5 h-5 text-emerald-400 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg> 0,04€ pro extra GB</li>
+                </ul>
+                <a href="/login" class="block text-center w-full py-3 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-semibold transition shadow-lg">Jetzt sichern</a>
+            </div>
+
+            <!-- Maxi-Halle -->
+            <div class="bg-gray-800 rounded-3xl p-8 border border-gray-700 text-left hover:border-gray-500 transition">
+                <h3 class="text-2xl font-bold text-white mb-2">Maxi-Halle</h3>
+                <div class="mb-6 flex items-end">
+                    <span class="text-4xl font-extrabold text-white">€14.99</span><span class="text-gray-400 ml-2 mb-1">/mo</span>
+                </div>
+                <ul class="text-gray-300 text-sm space-y-4 mb-8">
+                    <li class="flex items-center"><svg class="w-5 h-5 text-emerald-400 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg> <strong>500 GB</strong> inklusive</li>
+                    <li class="flex items-center"><svg class="w-5 h-5 text-emerald-400 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg> 0,03€ pro extra GB</li>
+                </ul>
+                <a href="/login" class="block text-center w-full py-3 rounded-xl bg-gray-700 hover:bg-gray-600 text-white font-semibold transition">Jetzt sichern</a>
+            </div>
+
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="border-t border-gray-800 py-8 text-center text-gray-500 text-sm mt-auto">
+        <p>&copy; 2026 DigitalBox Rentals.</p>
+    </footer>
+
+</body>
+</html>

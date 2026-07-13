@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - DigitalBox Rentals</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap');
+        body { font-family: 'Inter', sans-serif; }
+        .glass {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+    </style>
+</head>
+<body class="bg-gray-900 text-white min-h-screen flex items-center justify-center relative overflow-hidden">
+    <!-- Background gradients -->
+    <div class="absolute top-[-20%] left-[-10%] w-[500px] h-[500px] bg-blue-500/20 rounded-full blur-[120px]"></div>
+    
+    <div class="glass p-10 rounded-3xl w-full max-w-md z-10 shadow-2xl relative" x-data="{ mode: 'login' }">
+        <a href="/" class="absolute top-6 left-6 text-gray-400 hover:text-white transition">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
+        </a>
+        <div class="text-center mb-10 mt-4">
+            <h2 class="text-3xl font-bold tracking-tight mb-2" x-text="mode === 'login' ? 'Welcome Back' : 'Create Account'"></h2>
+            <p class="text-gray-400 text-sm" x-text="mode === 'login' ? 'Enter your details to access your box.' : 'Sign up to rent your digital box.'"></p>
+        </div>
+
+        <script>
+            const urlParams = new URLSearchParams(window.location.search);
+            const errorMsg = urlParams.get('error');
+            if(errorMsg) {
+                document.write(`<div class="bg-red-500/20 text-red-400 p-3 rounded-lg text-sm mb-6 text-center border border-red-500/30">${errorMsg}</div>`);
+            }
+        </script>
+
+        <!-- Login Form -->
+        <form x-show="mode === 'login'" action="/login" method="POST" class="space-y-6">
+            <div>
+                <label class="block text-sm font-medium text-gray-400 mb-2">Email Address</label>
+                <input type="email" name="email" required class="w-full bg-gray-800 border border-gray-700 rounded-xl px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-blue-500 transition">
+            </div>
+            <div>
+                <label class="block text-sm font-medium text-gray-400 mb-2">Password</label>
+                <input type="password" name="password" required class="w-full bg-gray-800 border border-gray-700 rounded-xl px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-blue-500 transition">
+            </div>
+            <button type="submit" class="w-full bg-blue-500 hover:bg-blue-600 text-white font-semibold py-3 rounded-xl transition shadow-lg shadow-blue-500/30">Sign In</button>
+        </form>
+
+        <!-- Register Form -->
+        <form x-show="mode === 'register'" action="/register" method="POST" class="space-y-6" style="display: none;">
+            <div>
+                <label class="block text-sm font-medium text-gray-400 mb-2">Email Address</label>
+                <input type="email" name="email" required class="w-full bg-gray-800 border border-gray-700 rounded-xl px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-blue-500 transition">
+            </div>
+            <div>
+                <label class="block text-sm font-medium text-gray-400 mb-2">Password</label>
+                <input type="password" name="password" required class="w-full bg-gray-800 border border-gray-700 rounded-xl px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-blue-500 transition">
+            </div>
+            <button type="submit" class="w-full bg-emerald-500 hover:bg-emerald-600 text-white font-semibold py-3 rounded-xl transition shadow-lg shadow-emerald-500/30">Create Account</button>
+        </form>
+
+        <div class="mt-8 text-center text-sm text-gray-400">
+            <span x-show="mode === 'login'">Don't have an account? <button type="button" @click="mode = 'register'" class="text-blue-400 hover:underline">Sign up</button></span>
+            <span x-show="mode === 'register'" style="display: none;">Already have an account? <button type="button" @click="mode = 'login'" class="text-blue-400 hover:underline">Sign in</button></span>
+        </div>
+    </div>
+</body>
+</html>

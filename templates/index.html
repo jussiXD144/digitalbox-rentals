@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DigitalBox Rentals - Dynamic Storage</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+    </style>
+</head>
+<body class="bg-gray-900 text-white min-h-screen flex flex-col">
+
+    <!-- Header -->
+    <header class="py-6 px-8 border-b border-gray-800 flex justify-between items-center bg-gray-900/80 backdrop-blur-md sticky top-0 z-50">
+        <div class="flex items-center space-x-3">
+            <div class="w-8 h-8 rounded bg-gradient-to-br from-blue-500 to-emerald-400 flex items-center justify-center font-bold text-lg">D</div>
+            <h1 class="text-xl font-extrabold tracking-tight">DigitalBox</h1>
+        </div>
+        <nav>
+            {% if user %}
+                <a href="/dashboard" class="text-sm font-semibold text-gray-300 hover:text-white mr-6">Dashboard</a>
+                <a href="/logout" class="text-sm font-semibold px-4 py-2 rounded border border-gray-700 hover:bg-gray-800 transition">Logout</a>
+            {% else %}
+                <a href="/login" class="text-sm font-semibold px-4 py-2 rounded bg-blue-600 hover:bg-blue-500 transition shadow-lg shadow-blue-500/30">Login / Signup</a>
+            {% endif %}
+        </nav>
+    </header>
+
+    <!-- Hero -->
+    <main class="flex-grow flex flex-col items-center justify-center text-center px-4 py-20 relative overflow-hidden">
+        <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-blue-600 rounded-full mix-blend-multiply filter blur-[128px] opacity-20 pointer-events-none"></div>
+        <div class="absolute top-1/2 left-1/2 -translate-x-1/4 -translate-y-1/4 w-96 h-96 bg-emerald-600 rounded-full mix-blend-multiply filter blur-[128px] opacity-20 pointer-events-none"></div>
+
+        <h2 class="text-5xl md:text-7xl font-extrabold tracking-tight mb-6 relative z-10">Limitless Cloud Storage.</h2>
+        <p class="text-lg md:text-xl text-gray-400 max-w-2xl mb-12 relative z-10">
+            Dynamically expanding buckets on reliable S3-compatible infrastructure. Pay only for the extra gigabytes you actually use.
+        </p>
+
+        <!-- Pricing Cards -->
+        <div class="w-full max-w-6xl mx-auto grid md:grid-cols-3 gap-8 relative z-10 px-4">
+            
+            <!-- Mini-Box -->
+            <div class="bg-gray-800/80 backdrop-blur-sm rounded-3xl p-8 border border-gray-700 hover:border-gray-500 transition-all text-left">
+                <h3 class="text-2xl font-bold text-white mb-2">Mini-Box</h3>
+                <p class="text-gray-400 text-sm mb-6">Perfekt für Einsteiger & Backups.</p>
+                <div class="mb-6 flex items-end">
+                    <span class="text-5xl font-extrabold text-white">€2.99</span>
+                    <span class="text-gray-400 ml-2 mb-1">/mo</span>
+                </div>
+                <ul class="text-gray-300 text-sm space-y-4 mb-8">
+                    <li class="flex items-center"><svg class="w-5 h-5 text-emerald-400 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg> <strong>20 GB</strong> Speicher inklusive</li>
+                    <li class="flex items-center"><svg class="w-5 h-5 text-emerald-400 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg> 0,05€ pro weiterem GB</li>
+                    <li class="flex items-center"><svg class="w-5 h-5 text-emerald-400 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg> API Access</li>
+                </ul>
+                <a href="/login" class="block text-center w-full py-3 rounded-xl bg-gray-700 hover:bg-gray-600 text-white font-semibold transition">Starten</a>
+            </div>
+
+            <!-- Medi-Box -->
+            <div class="bg-gray-800 rounded-3xl p-8 border border-blue-500 shadow-2xl shadow-blue-500/20 transform md:-translate-y-4 text-left relative overflow-hidden">
+                <div class="absolute top-0 right-0 bg-blue-500 text-white text-xs font-bold px-3 py-1 rounded-bl-lg uppercase tracking-wider">Bestseller</div>
+                <h3 class="text-2xl font-bold text-white mb-2">Medi-Box</h3>
+                <p class="text-blue-200 text-sm mb-6">Für Fotografen & Creator.</p>
+                <div class="mb-6 flex items-end">
+                    <span class="text-5xl font-extrabold text-white">€6.99</span>
+                    <span class="text-blue-200 ml-2 mb-1">/mo</span>
+                </div>
+                <ul class="text-gray-200 text-sm space-y-4 mb-8">
+                    <li class="flex items-center"><svg class="w-5 h-5 text-emerald-400 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg> <strong>100 GB</strong> Speicher inklusive</li>
+                    <li class="flex items-center"><svg class="w-5 h-5 text-emerald-400 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg> 0,04€ pro weiterem GB</li>
+                    <li class="flex items-center"><svg class="w-5 h-5 text-emerald-400 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg> Priority Support</li>
+                </ul>
+                <a href="/login" class="block text-center w-full py-3 rounded-xl bg-gradient-to-r from-blue-500 to-emerald-500 hover:from-blue-600 hover:to-emerald-600 text-white font-semibold transition shadow-lg">Starten</a>
+            </div>
+
+            <!-- Maxi-Halle -->
+            <div class="bg-gray-800/80 backdrop-blur-sm rounded-3xl p-8 border border-gray-700 hover:border-gray-500 transition-all text-left">
+                <h3 class="text-2xl font-bold text-white mb-2">Maxi-Halle</h3>
+                <p class="text-gray-400 text-sm mb-6">Für Agenturen & Archive.</p>
+                <div class="mb-6 flex items-end">
+                    <span class="text-5xl font-extrabold text-white">€14.99</span>
+                    <span class="text-gray-400 ml-2 mb-1">/mo</span>
+                </div>
+                <ul class="text-gray-300 text-sm space-y-4 mb-8">
+                    <li class="flex items-center"><svg class="w-5 h-5 text-emerald-400 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg> <strong>500 GB</strong> Speicher inklusive</li>
+                    <li class="flex items-center"><svg class="w-5 h-5 text-emerald-400 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg> 0,03€ pro weiterem GB</li>
+                    <li class="flex items-center"><svg class="w-5 h-5 text-emerald-400 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg> 24/7 SLA Support</li>
+                </ul>
+                <a href="/login" class="block text-center w-full py-3 rounded-xl bg-gray-700 hover:bg-gray-600 text-white font-semibold transition">Starten</a>
+            </div>
+
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="border-t border-gray-800 py-8 text-center text-gray-500 text-sm">
+        <p>&copy; 2026 DigitalBox Rentals. Powered by Backblaze B2 & Stripe.</p>
+    </footer>
+
+</body>
+</html>

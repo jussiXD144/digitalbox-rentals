@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - DigitalBox</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Alpine.js for lightweight state management -->
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+    </style>
+</head>
+<body class="bg-gray-900 text-white min-h-screen">
+
+    <header class="py-4 px-8 border-b border-gray-800 flex justify-between items-center bg-gray-900/80 backdrop-blur-md sticky top-0 z-50">
+        <div class="flex items-center space-x-3">
+            <a href="/" class="w-8 h-8 rounded bg-gradient-to-br from-blue-500 to-emerald-400 flex items-center justify-center font-bold text-lg">D</a>
+            <h1 class="text-xl font-extrabold tracking-tight">Dashboard</h1>
+        </div>
+        <div class="flex items-center space-x-4">
+            <span class="text-sm text-gray-400">{{ user.email }}</span>
+            <a href="/logout" class="text-sm font-semibold px-4 py-2 rounded bg-gray-800 hover:bg-gray-700 transition">Logout</a>
+        </div>
+    </header>
+
+    <main class="max-w-6xl mx-auto px-4 py-12">
+        {% if request.query_params.get('error') %}
+        <div class="bg-red-500/20 border border-red-500 text-red-200 px-4 py-3 rounded mb-6">
+            {{ request.query_params.get('error') }}
+        </div>
+        {% endif %}
+
+        {% if not has_active_box %}
+        <div class="text-center max-w-4xl mx-auto mt-10">
+            <h2 class="text-3xl font-extrabold text-white mb-4">Choose Your DigitalBox</h2>
+            <p class="text-gray-400 mb-10 max-w-xl mx-auto">Select a subscription plan below to provision your personal S3 bucket. Storage automatically expands as needed.</p>
+            
+            <div class="grid md:grid-cols-3 gap-6 text-left">
+                <!-- Mini -->
+                <div class="bg-gray-800 rounded-2xl p-6 border border-gray-700 hover:border-gray-500 transition">
+                    <h3 class="font-bold text-white text-xl">Mini-Box</h3>
+                    <p class="text-sm text-emerald-400 mt-1 mb-4">20 GB inklusive</p>
+                    <p class="text-sm text-gray-400 mb-4">Danach 0,05€/GB</p>
+                    <div class="mb-6">
+                        <span class="text-3xl font-extrabold text-white">€2.99</span><span class="text-sm text-gray-500">/mo</span>
+                    </div>
+                    <form action="/create-checkout-session" method="POST">
+                        <input type="hidden" name="plan_id" value="mini">
+                        <button type="submit" class="w-full py-3 rounded-xl bg-gray-700 hover:bg-gray-600 text-white font-semibold transition">Abonnieren</button>
+                    </form>
+                </div>
+                <!-- Medi -->
+                <div class="bg-gray-800 rounded-2xl p-6 border border-blue-500 shadow-xl shadow-blue-500/10 transform md:-translate-y-2">
+                    <h3 class="font-bold text-white text-xl">Medi-Box</h3>
+                    <p class="text-sm text-emerald-400 mt-1 mb-4">100 GB inklusive</p>
+                    <p class="text-sm text-gray-400 mb-4">Danach 0,04€/GB</p>
+                    <div class="mb-6">
+                        <span class="text-3xl font-extrabold text-white">€6.99</span><span class="text-sm text-gray-500">/mo</span>
+                    </div>
+                    <form action="/create-checkout-session" method="POST">
+                        <input type="hidden" name="plan_id" value="medi">
+                        <button type="submit" class="w-full py-3 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-semibold transition shadow-lg">Abonnieren</button>
+                    </form>
+                </div>
+                <!-- Maxi -->
+                <div class="bg-gray-800 rounded-2xl p-6 border border-gray-700 hover:border-gray-500 transition">
+                    <h3 class="font-bold text-white text-xl">Maxi-Halle</h3>
+                    <p class="text-sm text-emerald-400 mt-1 mb-4">500 GB inklusive</p>
+                    <p class="text-sm text-gray-400 mb-4">Danach 0,03€/GB</p>
+                    <div class="mb-6">
+                        <span class="text-3xl font-extrabold text-white">€14.99</span><span class="text-sm text-gray-500">/mo</span>
+                    </div>
+                    <form action="/create-checkout-session" method="POST">
+                        <input type="hidden" name="plan_id" value="maxi">
+                        <button type="submit" class="w-full py-3 rounded-xl bg-gray-700 hover:bg-gray-600 text-white font-semibold transition">Abonnieren</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+        {% else %}
+        
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            <!-- Sidebar: Stats & Info -->
+            <div class="space-y-6">
+                <!-- Usage Card -->
+                <div class="bg-gray-800 rounded-2xl p-6 border border-gray-700 shadow-xl" x-data="{
+                    bytes: {{ user.digitalbox.current_storage_bytes|default(0) }},
+                    quotaGB: {{ included_gb }},
+                    get currentGB() { return this.bytes / (1024 * 1024 * 1024); },
+                    get extraGB() { return Math.max(0, this.currentGB - this.quotaGB); },
+                    get extraCost() { 
+                        const prices = {'mini': 0.05, 'medi': 0.04, 'maxi': 0.03};
+                        return (Math.ceil(this.extraGB) * prices['{{ plan_name }}']).toFixed(2);
+                    },
+                    get percentage() {
+                        if(this.quotaGB === 0) return 100;
+                        return Math.min(100, (this.currentGB / this.quotaGB) * 100);
+                    },
+                    formatBytes(b) {
+                        if (b === 0) return '0 Bytes';
+                        const k = 1024, sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB'], i = Math.floor(Math.log(b) / Math.log(k));
+                        return parseFloat((b / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+                    }
+                }">
+                    <div class="flex justify-between items-start mb-4">
+                        <div>
+                            <h3 class="text-gray-400 text-sm font-semibold uppercase tracking-wider mb-1">Current Plan</h3>
+                            <p class="text-xl font-bold text-white capitalize">{{ plan_name }}-Box</p>
+                        </div>
+                        <div class="bg-emerald-500/20 text-emerald-400 px-3 py-1 rounded-full text-xs font-bold">
+                            Active
+                        </div>
+                    </div>
+                    
+                    <div class="mt-6 mb-2 flex justify-between items-end">
+                        <div class="text-3xl font-extrabold text-white" x-text="formatBytes(bytes)"></div>
+                        <div class="text-gray-400 text-sm font-medium">/ <span x-text="quotaGB"></span> GB Included</div>
+                    </div>
+                    
+                    <!-- Progress Bar -->
+                    <div class="w-full bg-gray-700 rounded-full h-2.5 mb-4 overflow-hidden flex">
+                        <div class="bg-blue-500 h-2.5 rounded-full transition-all duration-500" :style="`width: ${percentage}%`" :class="{'bg-red-500': percentage >= 100, 'bg-amber-500': percentage > 80 && percentage < 100}"></div>
+                    </div>
+                    
+                    <!-- Extra Costs Warning -->
+                    <div x-show="extraGB > 0" class="mt-4 p-3 bg-red-500/10 border border-red-500/30 rounded-lg" style="display: none;">
+                        <p class="text-xs text-red-400 font-semibold mb-1">Quota Exceeded</p>
+                        <p class="text-sm text-gray-300">You are using <span class="text-white font-bold" x-text="extraGB.toFixed(2)"></span> GB extra.</p>
+                        <p class="text-sm text-gray-300">Estimated extra cost: <span class="text-red-400 font-bold">€<span x-text="extraCost"></span></span></p>
+                    </div>
+                </div>
+
+                <!-- API Credentials Card -->
+                <div class="bg-gray-800 rounded-2xl p-6 border border-gray-700">
+                    <h3 class="text-gray-400 text-sm font-semibold uppercase tracking-wider mb-4">Storage Info</h3>
+                    <div class="space-y-4 text-sm">
+                        <div>
+                            <p class="text-gray-500 mb-1">S3 Bucket Path</p>
+                            <div class="bg-gray-900 p-2 rounded border border-gray-700 font-mono text-gray-300 break-all text-xs">
+                                {{ user.digitalbox.bucket_path }}
+                            </div>
+                        </div>
+                        <div>
+                            <p class="text-gray-500 mb-1">Endpoint (B2)</p>
+                            <div class="bg-gray-900 p-2 rounded border border-gray-700 font-mono text-gray-300 break-all text-xs">
+                                s3.eu-central-003.backblazeb2.com
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Main File Browser Area -->
+            <div class="lg:col-span-2">
+                <div class="bg-gray-800 rounded-2xl border border-gray-700 shadow-xl overflow-hidden flex flex-col h-[600px]" x-data="fileBrowser()">
+                    <!-- Browser Header -->
+                    <div class="p-4 border-b border-gray-700 flex justify-between items-center bg-gray-800/50">
+                        <h2 class="font-bold text-lg text-white">Your Files</h2>
+                        
+                        <!-- Upload Form -->
+                        <form @submit.prevent="uploadFile" class="flex space-x-2">
+                            <label class="cursor-pointer bg-gray-700 hover:bg-gray-600 text-white text-sm font-semibold py-2 px-4 rounded-lg transition border border-gray-600">
+                                Browse...
+                                <input type="file" x-ref="fileInput" class="hidden">
+                            </label>
+                            <button type="submit" :disabled="uploading" class="bg-blue-600 hover:bg-blue-500 disabled:opacity-50 text-white text-sm font-semibold py-2 px-4 rounded-lg transition shadow-lg shadow-blue-500/20">
+                                <span x-show="!uploading">Upload</span>
+                                <span x-show="uploading">Uploading...</span>
+                            </button>
+                        </form>
+                    </div>
+                    
+                    <!-- Error Message -->
+                    <div x-show="error" class="p-3 bg-red-500 text-white text-sm" x-text="error" style="display: none;"></div>
+
+                    <!-- File List -->
+                    <div class="flex-grow overflow-y-auto p-4">
+                        <div x-show="loading" class="text-center text-gray-500 py-10">
+                            Loading files...
+                        </div>
+                        
+                        <div x-show="!loading && files.length === 0" class="text-center text-gray-500 py-10" style="display: none;">
+                            Your box is empty. Upload a file to get started.
+                        </div>
+
+                        <ul class="space-y-2">
+                            <template x-for="file in files" :key="file.name">
+                                <li class="flex justify-between items-center bg-gray-900/50 p-3 rounded-lg border border-gray-800 hover:border-gray-600 transition group">
+                                    <div class="flex items-center space-x-3 overflow-hidden">
+                                        <svg class="w-6 h-6 text-blue-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path></svg>
+                                        <span class="text-sm font-medium text-gray-200 truncate" x-text="file.name"></span>
+                                    </div>
+                                    <div class="flex items-center space-x-4 flex-shrink-0">
+                                        <span class="text-xs text-gray-500" x-text="formatBytes(file.size)"></span>
+                                        <button @click="deleteFile(file.name)" class="text-red-400 hover:text-red-300 p-1 opacity-0 group-hover:opacity-100 transition focus:opacity-100" title="Delete">
+                                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
+                                        </button>
+                                    </div>
+                                </li>
+                            </template>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        {% endif %}
+    </main>
+
+    <script>
+        document.addEventListener('alpine:init', () => {
+            Alpine.data('fileBrowser', () => ({
+                files: [],
+                loading: true,
+                uploading: false,
+                error: null,
+                
+                init() {
+                    this.fetchFiles();
+                },
+                
+                formatBytes(b) {
+                    if (b === 0) return '0 Bytes';
+                    const k = 1024, sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB'], i = Math.floor(Math.log(b) / Math.log(k));
+                    return parseFloat((b / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+                },
+                
+                async fetchFiles() {
+                    this.loading = true;
+                    this.error = null;
+                    try {
+                        const res = await fetch('/box/files');
+                        if (!res.ok) throw new Error('Failed to load files');
+                        const data = await res.json();
+                        this.files = data.files;
+                    } catch (e) {
+                        this.error = e.message;
+                    } finally {
+                        this.loading = false;
+                    }
+                },
+                
+                async uploadFile() {
+                    const input = this.$refs.fileInput;
+                    if (!input.files || input.files.length === 0) return;
+                    
+                    const formData = new FormData();
+                    formData.append('file', input.files[0]);
+                    
+                    this.uploading = true;
+                    this.error = null;
+                    
+                    try {
+                        const res = await fetch('/box/upload', {
+                            method: 'POST',
+                            body: formData
+                        });
+                        if (!res.ok) {
+                            const err = await res.json();
+                            throw new Error(err.detail || 'Upload failed');
+                        }
+                        // Refresh page to update quota widget too
+                        window.location.reload();
+                    } catch (e) {
+                        this.error = e.message;
+                        this.uploading = false;
+                    }
+                },
+                
+                async deleteFile(filename) {
+                    if (!confirm(`Are you sure you want to delete ${filename}?`)) return;
+                    
+                    this.error = null;
+                    try {
+                        const res = await fetch(`/box/files/${encodeURIComponent(filename)}`, {
+                            method: 'DELETE'
+                        });
+                        if (!res.ok) throw new Error('Failed to delete file');
+                        // Refresh page to update quota widget too
+                        window.location.reload();
+                    } catch (e) {
+                        this.error = e.message;
+                    }
+                }
+            }))
+        })
+    </script>
+</body>
+</html>
