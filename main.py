@@ -11,8 +11,12 @@ from database import engine, Base, get_db
 from models import User
 from schemas import UserCreate
 from auth import get_password_hash, verify_password, create_access_token, get_current_user_from_cookie, ACCESS_TOKEN_EXPIRE_MINUTES
-from routers import box, stripe_webhooks, cron, seo
+from routers import box, stripe_webhooks, cron, seo, admin
 from dotenv import load_dotenv
+
+from apscheduler.schedulers.background import BackgroundScheduler
+from apscheduler.triggers.cron import CronTrigger
+from services.whatsapp import send_whatsapp_report
 
 load_dotenv()
 
@@ -24,6 +28,18 @@ app.include_router(box.router)
 app.include_router(stripe_webhooks.router)
 app.include_router(cron.router)
 app.include_router(seo.router)
+app.include_router(admin.router)
+
+scheduler = BackgroundScheduler()
+
+@app.on_event("startup")
+def start_scheduler():
+    scheduler.add_job(send_whatsapp_report, CronTrigger(day=1, hour=9, minute=0))
+    scheduler.start()
+
+@app.on_event("shutdown")
+def stop_scheduler():
+    scheduler.shutdown()
 
 # We use absolute path to templates to avoid CWD issues
 current_dir = os.path.dirname(os.path.abspath(__file__))
