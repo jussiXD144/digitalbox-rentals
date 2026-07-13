@@ -6,7 +6,9 @@ from dotenv import load_dotenv
 load_dotenv()
 
 # Use DATABASE_URL from environment (e.g. Render PostgreSQL), fallback to local SQLite
-SQLALCHEMY_DATABASE_URL = os.getenv("DATABASE_URL", "sqlite:///./digitalbox.db")
+SQLALCHEMY_DATABASE_URL = os.getenv("DATABASE_URL")
+if not SQLALCHEMY_DATABASE_URL:
+    SQLALCHEMY_DATABASE_URL = "sqlite:///./digitalbox.db"
 
 # Render's PostgreSQL URL starts with postgres:// but SQLAlchemy requires postgresql://
 if SQLALCHEMY_DATABASE_URL.startswith("postgres://"):
