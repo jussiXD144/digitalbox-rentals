@@ -160,8 +160,8 @@ async def create_checkout_session(request: Request, plan_id: str = Form(...), cr
         )
         return RedirectResponse(url=checkout_session['url'], status_code=status.HTTP_303_SEE_OTHER)
     except Exception as e:
-        print(f"Stripe error (expected without valid keys): {e}")
-        return RedirectResponse(url=f"/mock-checkout-success?plan_id={plan_id}&crypto_addon={str(crypto_addon).lower()}", status_code=status.HTTP_303_SEE_OTHER)
+        print(f"Stripe error: {e}")
+        return RedirectResponse(url=f"/dashboard?error=Stripe Konfigurationsfehler: {str(e)}", status_code=status.HTTP_303_SEE_OTHER)
 
 @app.get("/mock-checkout-success")
 async def mock_checkout_success(plan_id: str = "mini", crypto_addon: bool = False, user: User = Depends(get_current_user_from_cookie), db: Session = Depends(get_db)):
