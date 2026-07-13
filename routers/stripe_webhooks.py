@@ -48,6 +48,7 @@ async def handle_checkout_session(session: dict, db: Session):
     user_id_str = session.get("client_reference_id")
     subscription_id = session.get("subscription")
     plan_id = session.get("metadata", {}).get("plan_id", "mini")
+    has_crypto_addon = session.get("metadata", {}).get("has_crypto_addon") == "true"
     customer_id = session.get("customer")
     
     if not user_id_str:
@@ -65,13 +66,15 @@ async def handle_checkout_session(session: dict, db: Session):
         existing_sub.status = "active"
         existing_sub.stripe_subscription_id = subscription_id
         existing_sub.plan_name = plan_id
+        existing_sub.has_crypto_addon = has_crypto_addon
         db.commit()
     else:
         new_sub = Subscription(
             user_id=user_id,
             stripe_subscription_id=subscription_id,
             status="active",
-            plan_name=plan_id
+            plan_name=plan_id,
+            has_crypto_addon=has_crypto_addon
         )
         db.add(new_sub)
         

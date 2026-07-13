@@ -23,6 +23,7 @@ class Subscription(Base):
     stripe_subscription_id = Column(String, unique=True, index=True)
     status = Column(String)  # active, canceled, past_due, etc.
     plan_name = Column(String)
+    has_crypto_addon = Column(Boolean, default=False)
     current_period_end = Column(DateTime)
     
     user = relationship("User", back_populates="subscriptions")

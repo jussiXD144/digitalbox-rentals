@@ -92,6 +92,8 @@ async def dashboard(request: Request, db: Session = Depends(get_db), user: User 
     active_sub = db.query(Subscription).filter(Subscription.user_id == user.id, Subscription.status == "active").first()
     plan_name = active_sub.plan_name if active_sub else "mini"
     
+    has_crypto_addon = active_sub.has_crypto_addon if active_sub else False
+    
     quotas = {"mini": 20, "medi": 100, "maxi": 500}
     included_gb = quotas.get(plan_name, 20)
 
@@ -99,47 +101,56 @@ async def dashboard(request: Request, db: Session = Depends(get_db), user: User 
         "user": user, 
         "has_active_box": has_active_box,
         "plan_name": plan_name,
-        "included_gb": included_gb
+        "included_gb": included_gb,
+        "has_crypto_addon": has_crypto_addon
     })
 
 @app.post("/create-checkout-session")
-async def create_checkout_session(request: Request, plan_id: str = Form(...), user: User = Depends(get_current_user_from_cookie)):
+async def create_checkout_session(request: Request, plan_id: str = Form(...), crypto_addon: bool = Form(False), user: User = Depends(get_current_user_from_cookie)):
     if not user:
         return RedirectResponse(url="/login")
         
     if plan_id == "mini":
         base_price = os.getenv("STRIPE_PRICE_MINI_BASE", "price_mini_base")
-        metered_price = os.getenv("STRIPE_PRICE_MINI_METERED", "price_mini_metered")
+        addon_price = os.getenv("STRIPE_PRICE_MINI_CRYPTO_ADDON", "price_mini_crypto")
     elif plan_id == "medi":
         base_price = os.getenv("STRIPE_PRICE_MEDI_BASE", "price_medi_base")
-        metered_price = os.getenv("STRIPE_PRICE_MEDI_METERED", "price_medi_metered")
+        addon_price = os.getenv("STRIPE_PRICE_MEDI_CRYPTO_ADDON", "price_medi_crypto")
     elif plan_id == "maxi":
         base_price = os.getenv("STRIPE_PRICE_MAXI_BASE", "price_maxi_base")
-        metered_price = os.getenv("STRIPE_PRICE_MAXI_METERED", "price_maxi_metered")
+        addon_price = os.getenv("STRIPE_PRICE_MAXI_CRYPTO_ADDON", "price_maxi_crypto")
     else:
         return RedirectResponse(url="/dashboard?error=Invalid plan")
     
+    metered_price = os.getenv("STRIPE_PRICE_METERED_OVERUSE", "price_metered_overuse")
+    
     try:
         domain_url = str(request.base_url)
+        
+        line_items = [
+            {"price": base_price, "quantity": 1},
+            {"price": metered_price}
+        ]
+        
+        if crypto_addon:
+            line_items.insert(1, {"price": addon_price, "quantity": 1})
+            
         checkout_session = stripe.checkout.Session.create(
             success_url=domain_url + "dashboard?session_id={CHECKOUT_SESSION_ID}",
             cancel_url=domain_url + "dashboard",
             payment_method_types=["card"],
             mode="subscription",
-            line_items=[
-                {"price": base_price, "quantity": 1},
-                {"price": metered_price}
-            ],
+            line_items=line_items,
             client_reference_id=str(user.id),
-            metadata={"plan_id": plan_id}
+            metadata={"plan_id": plan_id, "has_crypto_addon": str(crypto_addon).lower()}
         )
         return RedirectResponse(url=checkout_session['url'], status_code=status.HTTP_303_SEE_OTHER)
     except Exception as e:
         print(f"Stripe error (expected without valid keys): {e}")
-        return RedirectResponse(url=f"/mock-checkout-success?plan_id={plan_id}", status_code=status.HTTP_303_SEE_OTHER)
+        return RedirectResponse(url=f"/mock-checkout-success?plan_id={plan_id}&crypto_addon={str(crypto_addon).lower()}", status_code=status.HTTP_303_SEE_OTHER)
 
 @app.get("/mock-checkout-success")
-async def mock_checkout_success(plan_id: str = "mini", user: User = Depends(get_current_user_from_cookie), db: Session = Depends(get_db)):
+async def mock_checkout_success(plan_id: str = "mini", crypto_addon: bool = False, user: User = Depends(get_current_user_from_cookie), db: Session = Depends(get_db)):
     if not user:
         return RedirectResponse(url="/login")
     
@@ -148,7 +159,7 @@ async def mock_checkout_success(plan_id: str = "mini", user: User = Depends(get_
         "customer": f"cus_mock_{user.id}",
         "subscription": f"sub_mock_{user.id}",
         "client_reference_id": str(user.id),
-        "metadata": {"plan_id": plan_id}
+        "metadata": {"plan_id": plan_id, "has_crypto_addon": str(crypto_addon).lower()}
     }
     await handle_checkout_session(mock_session, db)
     return RedirectResponse(url="/dashboard")
