@@ -82,7 +82,7 @@ async def handle_checkout_session(session: dict, db: Session):
         
         box = DigitalBox(
             user_id=user_id,
-            bucket_path=box_path,
+            storage_path=box_path,
             is_active=True,
             current_storage_bytes=0
         )
