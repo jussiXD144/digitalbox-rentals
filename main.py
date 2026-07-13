@@ -55,18 +55,24 @@ async def login_page(request: Request):
     return templates.TemplateResponse(request=request, name="login.html", context={})
 
 @app.post("/login")
-async def login(response: Response, email: str = Form(...), password: str = Form(...), db: Session = Depends(get_db)):
+async def login(response: Response, email: str = Form(...), password: str = Form(...), remember_me: bool = Form(False), db: Session = Depends(get_db)):
     user = db.query(User).filter(User.email == email).first()
     if not user or not verify_password(password, user.hashed_password):
         return RedirectResponse(url="/login?error=Invalid credentials", status_code=status.HTTP_302_FOUND)
     
-    access_token_expires = timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
+    if remember_me:
+        expires_delta = timedelta(days=30)
+        max_age = 30 * 24 * 60 * 60
+    else:
+        expires_delta = timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
+        max_age = None
+        
     access_token = create_access_token(
-        data={"sub": user.email}, expires_delta=access_token_expires
+        data={"sub": user.email}, expires_delta=expires_delta
     )
     
     response = RedirectResponse(url="/dashboard", status_code=status.HTTP_302_FOUND)
-    response.set_cookie(key="access_token", value=f"Bearer {access_token}", httponly=True)
+    response.set_cookie(key="access_token", value=f"Bearer {access_token}", httponly=True, max_age=max_age)
     return response
 
 @app.post("/register")
@@ -78,16 +84,8 @@ async def register(response: Response, email: str = Form(...), password: str = F
     new_user = User(email=email, hashed_password=get_password_hash(password))
     db.add(new_user)
     db.commit()
-    db.refresh(new_user)
     
-    access_token_expires = timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
-    access_token = create_access_token(
-        data={"sub": new_user.email}, expires_delta=access_token_expires
-    )
-    
-    res = RedirectResponse(url="/dashboard", status_code=status.HTTP_302_FOUND)
-    res.set_cookie(key="access_token", value=f"Bearer {access_token}", httponly=True)
-    return res
+    return RedirectResponse(url="/login?success=Account created! Please sign in.", status_code=status.HTTP_302_FOUND)
 
 @app.get("/logout")
 async def logout(response: Response):
