@@ -49,10 +49,14 @@ stripe.api_version = "2025-03-31.basil"
 
 @app.get("/", response_class=HTMLResponse)
 async def read_root(request: Request, user: User = Depends(get_current_user_from_cookie)):
+    if user:
+        return RedirectResponse(url="/dashboard", status_code=status.HTTP_302_FOUND)
     return templates.TemplateResponse(request=request, name="index.html", context={"user": user})
 
 @app.get("/login", response_class=HTMLResponse)
-async def login_page(request: Request):
+async def login_page(request: Request, user: User = Depends(get_current_user_from_cookie)):
+    if user:
+        return RedirectResponse(url="/dashboard", status_code=status.HTTP_302_FOUND)
     return templates.TemplateResponse(request=request, name="login.html", context={})
 
 @app.post("/login")
