@@ -140,7 +140,7 @@ async def dashboard(request: Request, db: Session = Depends(get_db), user: User 
 @app.post("/create-checkout-session")
 async def create_checkout_session(request: Request, plan_id: str = Form(...), crypto_addon: bool = Form(False), user: User = Depends(get_current_user_from_cookie)):
     if not user:
-        return RedirectResponse(url="/login")
+        return RedirectResponse(url="/login", status_code=status.HTTP_303_SEE_OTHER)
         
     if plan_id == "mini":
         base_price = os.getenv("STRIPE_PRICE_MINI_BASE", "price_mini_base")
