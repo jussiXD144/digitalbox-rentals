@@ -45,6 +45,7 @@ def stop_scheduler():
 current_dir = os.path.dirname(os.path.abspath(__file__))
 templates = Jinja2Templates(directory=os.path.join(current_dir, "templates"))
 stripe.api_key = os.getenv("STRIPE_SECRET_KEY")
+stripe.api_version = "2025-03-31.basil"
 
 @app.get("/", response_class=HTMLResponse)
 async def read_root(request: Request, user: User = Depends(get_current_user_from_cookie)):
@@ -156,7 +157,8 @@ async def create_checkout_session(request: Request, plan_id: str = Form(...), cr
             mode="subscription",
             line_items=line_items,
             client_reference_id=str(user.id),
-            metadata={"plan_id": plan_id, "has_crypto_addon": str(crypto_addon).lower()}
+            metadata={"plan_id": plan_id, "has_crypto_addon": str(crypto_addon).lower()},
+            managed_payments={"enabled": True}
         )
         return RedirectResponse(url=checkout_session['url'], status_code=status.HTTP_303_SEE_OTHER)
     except Exception as e:
