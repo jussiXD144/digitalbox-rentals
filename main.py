@@ -77,7 +77,7 @@ async def login(response: Response, email: str = Form(...), password: str = Form
     return response
 
 @app.post("/register")
-async def register(response: Response, email: str = Form(...), password: str = Form(...), db: Session = Depends(get_db)):
+async def register(response: Response, email: str = Form(...), password: str = Form(...), remember_me: bool = Form(False), db: Session = Depends(get_db)):
     user = db.query(User).filter(User.email == email).first()
     if user:
         return RedirectResponse(url="/login?error=Email already registered", status_code=status.HTTP_302_FOUND)
@@ -86,7 +86,20 @@ async def register(response: Response, email: str = Form(...), password: str = F
     db.add(new_user)
     db.commit()
     
-    return RedirectResponse(url="/login?success=Account created! Please sign in.", status_code=status.HTTP_302_FOUND)
+    if remember_me:
+        expires_delta = timedelta(days=30)
+        max_age = 30 * 24 * 60 * 60
+    else:
+        expires_delta = timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
+        max_age = None
+        
+    access_token = create_access_token(
+        data={"sub": new_user.email}, expires_delta=expires_delta
+    )
+    
+    response = RedirectResponse(url="/dashboard", status_code=status.HTTP_302_FOUND)
+    response.set_cookie(key="access_token", value=f"Bearer {access_token}", httponly=True, max_age=max_age)
+    return response
 
 @app.get("/logout")
 async def logout(response: Response):
