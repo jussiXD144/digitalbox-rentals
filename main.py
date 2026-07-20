@@ -153,7 +153,6 @@ async def create_checkout_session(request: Request, plan_id: str = Form(...), cr
         checkout_session = stripe.checkout.Session.create(
             success_url=domain_url + "dashboard?session_id={CHECKOUT_SESSION_ID}",
             cancel_url=domain_url + "dashboard",
-            payment_method_types=["card"],
             mode="subscription",
             line_items=line_items,
             client_reference_id=str(user.id),
