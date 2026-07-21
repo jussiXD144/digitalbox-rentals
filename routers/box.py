@@ -65,7 +65,7 @@ async def upload_file(file: UploadFile = File(...), box: DigitalBox = Depends(ge
         new_size = response.get('ContentLength', 0)
     except Exception as e:
         print(f"Upload failed: {e}")
-        raise HTTPException(status_code=500, detail="Failed to upload file")
+        raise HTTPException(status_code=500, detail=f"S3/B2 Error: {str(e)}")
         
     box.current_storage_bytes += (new_size - old_size)
     box.current_storage_bytes = max(0, box.current_storage_bytes)
