@@ -181,6 +181,22 @@ async def create_checkout_session(request: Request, plan_id: str = Form(...), cr
         print(f"Stripe error: {e}")
         return RedirectResponse(url=f"/dashboard?error=Stripe Konfigurationsfehler: {str(e)}", status_code=status.HTTP_303_SEE_OTHER)
 
+@app.post("/create-portal-session")
+async def create_portal_session(request: Request, user: User = Depends(get_current_user_from_cookie)):
+    if not user or not user.stripe_customer_id:
+        return RedirectResponse(url="/dashboard", status_code=status.HTTP_303_SEE_OTHER)
+        
+    try:
+        domain_url = str(request.base_url)
+        portal_session = stripe.billing_portal.Session.create(
+            customer=user.stripe_customer_id,
+            return_url=domain_url + "dashboard",
+        )
+        return RedirectResponse(url=portal_session.url, status_code=status.HTTP_303_SEE_OTHER)
+    except Exception as e:
+        print(f"Stripe portal error: {e}")
+        return RedirectResponse(url=f"/dashboard?error=Stripe Portal Fehler: {str(e)}", status_code=status.HTTP_303_SEE_OTHER)
+
 @app.get("/mock-checkout-success")
 async def mock_checkout_success(plan_id: str = "mini", crypto_addon: bool = False, user: User = Depends(get_current_user_from_cookie), db: Session = Depends(get_db)):
     if not user:

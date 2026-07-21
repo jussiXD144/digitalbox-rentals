@@ -117,15 +117,20 @@
                             <h3 class="text-gray-400 text-sm font-semibold uppercase tracking-wider mb-1">Current Plan</h3>
                             <p class="text-xl font-bold text-white capitalize">{{ plan_name }}-Box</p>
                         </div>
-                        <div class="flex space-x-2">
-                            {% if has_crypto_addon %}
-                            <div class="bg-purple-500/20 border border-purple-500/30 text-purple-400 px-3 py-1 rounded-full text-xs font-bold">
-                                Crypto/Media
+                        <div class="flex flex-col items-end space-y-2">
+                            <div class="flex space-x-2">
+                                {% if has_crypto_addon %}
+                                <div class="bg-purple-500/20 border border-purple-500/30 text-purple-400 px-3 py-1 rounded-full text-xs font-bold">
+                                    Crypto/Media
+                                </div>
+                                {% endif %}
+                                <div class="bg-emerald-500/20 border border-emerald-500/30 text-emerald-400 px-3 py-1 rounded-full text-xs font-bold">
+                                    Active
+                                </div>
                             </div>
-                            {% endif %}
-                            <div class="bg-emerald-500/20 border border-emerald-500/30 text-emerald-400 px-3 py-1 rounded-full text-xs font-bold">
-                                Active
-                            </div>
+                            <form action="/create-portal-session" method="POST">
+                                <button type="submit" class="text-xs text-blue-400 hover:text-blue-300 underline font-medium transition">Abo verwalten</button>
+                            </form>
                         </div>
                     </div>
                     
@@ -169,47 +174,76 @@
 
             <!-- Main File Browser Area -->
             <div class="lg:col-span-2">
-                <div class="bg-gray-800 rounded-2xl border border-gray-700 shadow-xl overflow-hidden flex flex-col h-[600px]" x-data="fileBrowser()">
+                <div 
+                    class="bg-gray-800 rounded-2xl border shadow-xl overflow-hidden flex flex-col h-[600px] transition-colors relative" 
+                    :class="isDragging ? 'border-blue-500 bg-gray-800/80' : 'border-gray-700'"
+                    x-data="fileBrowser()"
+                    @dragover.prevent="isDragging = true"
+                    @dragleave.prevent="isDragging = false"
+                    @drop.prevent="handleDrop($event)"
+                >
+                    <!-- Drag Overlay -->
+                    <div x-show="isDragging" class="absolute inset-0 bg-blue-500/10 backdrop-blur-sm z-50 flex items-center justify-center border-2 border-blue-500 border-dashed rounded-2xl" style="display: none;">
+                        <div class="text-center">
+                            <svg class="w-16 h-16 text-blue-500 mx-auto mb-4 animate-bounce" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"></path></svg>
+                            <h2 class="text-2xl font-bold text-white">Dateien hier ablegen</h2>
+                        </div>
+                    </div>
+
                     <!-- Browser Header -->
                     <div class="p-4 border-b border-gray-700 flex justify-between items-center bg-gray-800/50">
                         <h2 class="font-bold text-lg text-white">Your Files</h2>
                         
                         <!-- Upload Form -->
-                        <form @submit.prevent="uploadFile" class="flex space-x-2">
-                            <label class="cursor-pointer bg-gray-700 hover:bg-gray-600 text-white text-sm font-semibold py-2 px-4 rounded-lg transition border border-gray-600">
+                        <form @submit.prevent="uploadFile($refs.fileInput.files)" class="flex space-x-2">
+                            <label class="cursor-pointer bg-gray-700 hover:bg-gray-600 text-white text-sm font-semibold py-2 px-4 rounded-lg transition border border-gray-600 shadow-lg shadow-black/20">
                                 Browse...
-                                <input type="file" x-ref="fileInput" class="hidden">
+                                <input type="file" x-ref="fileInput" @change="uploadFile($event.target.files)" class="hidden" multiple>
                             </label>
-                            <button type="submit" :disabled="uploading" class="bg-blue-600 hover:bg-blue-500 disabled:opacity-50 text-white text-sm font-semibold py-2 px-4 rounded-lg transition shadow-lg shadow-blue-500/20">
-                                <span x-show="!uploading">Upload</span>
-                                <span x-show="uploading">Uploading...</span>
-                            </button>
                         </form>
                     </div>
-                    
-                    <!-- Error Message -->
-                    <div x-show="error" class="p-3 bg-red-500 text-white text-sm" x-text="error" style="display: none;"></div>
 
                     <!-- File List -->
-                    <div class="flex-grow overflow-y-auto p-4">
-                        <div x-show="loading" class="text-center text-gray-500 py-10">
-                            Loading files...
+                    <div class="flex-grow overflow-y-auto p-4 relative">
+                        <!-- Skeletons -->
+                        <div x-show="loading" class="space-y-3">
+                            <template x-for="i in 5">
+                                <div class="bg-gray-900/50 p-4 rounded-lg border border-gray-800 flex items-center space-x-4 animate-pulse">
+                                    <div class="w-8 h-8 bg-gray-800 rounded"></div>
+                                    <div class="h-4 bg-gray-800 rounded w-1/3"></div>
+                                </div>
+                            </template>
                         </div>
                         
-                        <div x-show="!loading && files.length === 0" class="text-center text-gray-500 py-10" style="display: none;">
-                            Your box is empty. Upload a file to get started.
+                        <!-- Empty State -->
+                        <div x-show="!loading && files.length === 0" class="flex flex-col items-center justify-center h-full text-center" style="display: none;">
+                            <svg class="w-16 h-16 text-gray-600 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4"></path></svg>
+                            <h3 class="text-xl font-bold text-gray-400">Keine Dateien gefunden</h3>
+                            <p class="text-gray-500 mt-2">Ziehe Dateien einfach hierher, um zu starten.</p>
                         </div>
 
+                        <!-- Files -->
                         <ul class="space-y-2">
                             <template x-for="file in files" :key="file.name">
-                                <li class="flex justify-between items-center bg-gray-900/50 p-3 rounded-lg border border-gray-800 hover:border-gray-600 transition group">
+                                <li class="flex justify-between items-center bg-gray-900/50 p-3 rounded-lg border border-gray-800 hover:border-gray-600 transition group relative">
+                                    
+                                    <!-- Deletion confirmation overlay -->
+                                    <div x-show="file.confirmDelete" class="absolute inset-0 bg-red-900/90 backdrop-blur-sm rounded-lg flex items-center justify-between px-4 z-10" style="display: none;">
+                                        <span class="text-sm font-semibold text-white">Wirklich löschen?</span>
+                                        <div class="flex space-x-2">
+                                            <button @click="file.confirmDelete = false" class="px-3 py-1 bg-gray-700 hover:bg-gray-600 rounded text-xs font-semibold text-white transition">Abbrechen</button>
+                                            <button @click="executeDelete(file.name)" class="px-3 py-1 bg-red-600 hover:bg-red-500 rounded text-xs font-semibold text-white transition shadow-lg shadow-red-500/30">Löschen</button>
+                                        </div>
+                                    </div>
+
                                     <div class="flex items-center space-x-3 overflow-hidden">
-                                        <svg class="w-6 h-6 text-blue-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path></svg>
-                                        <span class="text-sm font-medium text-gray-200 truncate" x-text="file.name"></span>
+                                        <!-- Dynamic Icon -->
+                                        <div x-html="getFileIcon(file.name)" class="w-8 h-8 flex-shrink-0 flex items-center justify-center bg-gray-800 rounded-lg p-1.5"></div>
+                                        <a :href="`/box/download/${encodeURIComponent(file.name)}`" class="text-sm font-medium text-gray-200 hover:text-blue-400 transition truncate" x-text="file.name" target="_blank"></a>
                                     </div>
                                     <div class="flex items-center space-x-4 flex-shrink-0">
-                                        <span class="text-xs text-gray-500" x-text="formatBytes(file.size)"></span>
-                                        <button @click="deleteFile(file.name)" class="text-red-400 hover:text-red-300 p-1 opacity-0 group-hover:opacity-100 transition focus:opacity-100" title="Delete">
+                                        <span class="text-xs text-gray-500 font-mono" x-text="formatBytes(file.size)"></span>
+                                        <button @click="file.confirmDelete = true" class="text-gray-500 hover:text-red-400 p-1 transition" title="Delete">
                                             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
                                         </button>
                                     </div>
@@ -224,13 +258,37 @@
         {% endif %}
     </main>
 
+    <!-- Toast System -->
+    <div x-data="{ toasts: [] }" @toast.window="toasts.push({id: Date.now(), ...$event.detail}); setTimeout(() => { toasts = toasts.filter(t => t.id !== $event.detail.id) }, 4000)" class="fixed bottom-5 right-5 z-50 flex flex-col space-y-2 pointer-events-none">
+        <template x-for="toast in toasts" :key="toast.id">
+            <div x-show="true" 
+                 x-transition:enter="transition ease-out duration-300 transform"
+                 x-transition:enter-start="translate-y-10 opacity-0"
+                 x-transition:enter-end="translate-y-0 opacity-100"
+                 x-transition:leave="transition ease-in duration-200 transform"
+                 x-transition:leave-start="translate-y-0 opacity-100"
+                 x-transition:leave-end="translate-y-10 opacity-0"
+                 class="px-4 py-3 rounded-lg shadow-2xl flex items-center space-x-3 min-w-[300px] pointer-events-auto border border-white/10"
+                 :class="toast.type === 'error' ? 'bg-red-600 text-white' : (toast.type === 'success' ? 'bg-emerald-600 text-white' : 'bg-blue-600 text-white')">
+                 
+                <!-- Icon -->
+                <svg x-show="toast.type === 'success'" class="w-5 h-5 text-emerald-200" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+                <svg x-show="toast.type === 'error'" class="w-5 h-5 text-red-200" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                <svg x-show="toast.type === 'info'" class="w-5 h-5 text-blue-200 animate-spin" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
+
+                <div class="flex-grow">
+                    <p class="font-semibold text-sm" x-text="toast.message"></p>
+                </div>
+            </div>
+        </template>
+    </div>
+
     <script>
         document.addEventListener('alpine:init', () => {
             Alpine.data('fileBrowser', () => ({
                 files: [],
                 loading: true,
-                uploading: false,
-                error: null,
+                isDragging: false,
                 
                 init() {
                     this.fetchFiles();
@@ -242,30 +300,52 @@
                     return parseFloat((b / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
                 },
                 
+                getFileIcon(filename) {
+                    const ext = filename.split('.').pop().toLowerCase();
+                    const imgExts = ['jpg', 'jpeg', 'png', 'gif', 'webp', 'svg'];
+                    const vidExts = ['mp4', 'mov', 'avi', 'mkv'];
+                    
+                    if (ext === 'pdf') {
+                        return `<svg class="w-full h-full text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path></svg>`;
+                    } else if (imgExts.includes(ext)) {
+                        return `<svg class="w-full h-full text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>`;
+                    } else if (vidExts.includes(ext)) {
+                        return `<svg class="w-full h-full text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"></path></svg>`;
+                    } else {
+                        return `<svg class="w-full h-full text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>`;
+                    }
+                },
+                
                 async fetchFiles() {
                     this.loading = true;
-                    this.error = null;
                     try {
                         const res = await fetch('/box/files');
                         if (!res.ok) throw new Error('Failed to load files');
                         const data = await res.json();
-                        this.files = data.files;
+                        this.files = data.files.map(f => ({...f, confirmDelete: false}));
                     } catch (e) {
-                        this.error = e.message;
+                        this.dispatchToast('error', e.message);
                     } finally {
                         this.loading = false;
                     }
                 },
                 
-                async uploadFile() {
-                    const input = this.$refs.fileInput;
-                    if (!input.files || input.files.length === 0) return;
+                handleDrop(e) {
+                    this.isDragging = false;
+                    const files = e.dataTransfer.files;
+                    if (files.length > 0) {
+                        this.uploadFile(files);
+                    }
+                },
+                
+                async uploadFile(fileList) {
+                    if (!fileList || fileList.length === 0) return;
                     
+                    const file = fileList[0];
                     const formData = new FormData();
-                    formData.append('file', input.files[0]);
+                    formData.append('file', file);
                     
-                    this.uploading = true;
-                    this.error = null;
+                    this.dispatchToast('info', `Lade ${file.name} hoch...`);
                     
                     try {
                         const res = await fetch('/box/upload', {
@@ -274,30 +354,37 @@
                         });
                         if (!res.ok) {
                             const err = await res.json();
-                            throw new Error(err.detail || 'Upload failed');
+                            throw new Error(err.detail || 'Upload fehlgeschlagen');
                         }
-                        // Refresh page to update quota widget too
-                        window.location.reload();
+                        this.dispatchToast('success', `${file.name} erfolgreich hochgeladen!`);
+                        
+                        setTimeout(() => { window.location.reload(); }, 1000);
                     } catch (e) {
-                        this.error = e.message;
-                        this.uploading = false;
+                        this.dispatchToast('error', e.message);
                     }
                 },
                 
-                async deleteFile(filename) {
-                    if (!confirm(`Are you sure you want to delete ${filename}?`)) return;
+                async executeDelete(filename) {
+                    const file = this.files.find(f => f.name === filename);
+                    if(file) file.confirmDelete = false;
                     
-                    this.error = null;
+                    this.dispatchToast('info', `Lösche ${filename}...`);
+                    
                     try {
                         const res = await fetch(`/box/files/${encodeURIComponent(filename)}`, {
                             method: 'DELETE'
                         });
-                        if (!res.ok) throw new Error('Failed to delete file');
-                        // Refresh page to update quota widget too
-                        window.location.reload();
+                        if (!res.ok) throw new Error('Löschen fehlgeschlagen');
+                        
+                        this.dispatchToast('success', `${filename} wurde gelöscht.`);
+                        setTimeout(() => { window.location.reload(); }, 1000);
                     } catch (e) {
-                        this.error = e.message;
+                        this.dispatchToast('error', e.message);
                     }
+                },
+                
+                dispatchToast(type, message) {
+                    window.dispatchEvent(new CustomEvent('toast', { detail: { type, message } }));
                 }
             }))
         })
