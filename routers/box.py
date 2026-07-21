@@ -96,7 +96,7 @@ async def download_file(filename: str, box: DigitalBox = Depends(get_active_box)
             raise HTTPException(status_code=404, detail="File not found")
         raise HTTPException(status_code=500, detail="Error downloading file")
 
-@router.delete("/delete/{filename}")
+@router.delete("/files/{filename}")
 async def delete_file(filename: str, box: DigitalBox = Depends(get_active_box), db: Session = Depends(get_db)):
     s3 = get_s3_client()
     prefix = box.storage_path
