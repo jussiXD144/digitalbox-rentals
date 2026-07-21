@@ -1,6 +1,6 @@
 import os
 import stripe
-from fastapi import FastAPI, Request, Form, Depends, HTTPException, status, Response
+from fastapi import FastAPI, Request, Form, Depends, HTTPException, status, Response, BackgroundTasks
 from fastapi.responses import HTMLResponse, RedirectResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
@@ -13,6 +13,7 @@ from schemas import UserCreate
 from auth import get_password_hash, verify_password, create_access_token, get_current_user_from_cookie, ACCESS_TOKEN_EXPIRE_MINUTES
 from routers import box, stripe_webhooks, cron, seo, admin
 from dotenv import load_dotenv
+from services.email_service import send_welcome_email
 
 from apscheduler.schedulers.background import BackgroundScheduler
 from apscheduler.triggers.cron import CronTrigger
@@ -81,7 +82,7 @@ async def login(response: Response, email: str = Form(...), password: str = Form
     return response
 
 @app.post("/register")
-async def register(response: Response, email: str = Form(...), password: str = Form(...), remember_me: bool = Form(False), db: Session = Depends(get_db)):
+async def register(response: Response, background_tasks: BackgroundTasks, email: str = Form(...), password: str = Form(...), remember_me: bool = Form(False), db: Session = Depends(get_db)):
     user = db.query(User).filter(User.email == email).first()
     if user:
         return RedirectResponse(url="/login?error=Email already registered", status_code=status.HTTP_302_FOUND)
@@ -89,6 +90,8 @@ async def register(response: Response, email: str = Form(...), password: str = F
     new_user = User(email=email, hashed_password=get_password_hash(password))
     db.add(new_user)
     db.commit()
+    
+    background_tasks.add_task(send_welcome_email, email)
     
     if remember_me:
         expires_delta = timedelta(days=30)

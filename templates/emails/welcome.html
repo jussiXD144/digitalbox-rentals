@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Willkommen bei DigitalBox</title>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f3f4f6; color: #1f2937; margin: 0; padding: 40px; }
+        .container { max-width: 600px; margin: 0 auto; background-color: #ffffff; border-radius: 16px; overflow: hidden; box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1); }
+        .header { background: linear-gradient(135deg, #3b82f6 0%, #10b981 100%); padding: 40px 20px; text-align: center; }
+        .header h1 { color: #ffffff; margin: 0; font-size: 28px; font-weight: 800; }
+        .content { padding: 40px 30px; line-height: 1.6; }
+        .button { display: inline-block; background-color: #2563eb; color: #ffffff; padding: 14px 28px; text-decoration: none; border-radius: 8px; font-weight: bold; margin-top: 20px; }
+        .footer { background-color: #f9fafb; padding: 20px; text-align: center; color: #6b7280; font-size: 14px; border-top: 1px solid #e5e7eb; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Willkommen bei DigitalBox! 🚀</h1>
+        </div>
+        <div class="content">
+            <p>Hallo {{ email }},</p>
+            <p>dein Account bei DigitalBox wurde soeben erfolgreich erstellt!</p>
+            <p>Wir freuen uns riesig, dich an Bord zu haben. Mit DigitalBox bekommst du nicht einfach nur Speicherplatz, sondern eine blitzschnelle, sichere und wunderschöne Infrastruktur für deine Daten.</p>
+            <p>Logge dich jetzt ein und starte direkt mit der Auswahl deiner Box:</p>
+            <div style="text-align: center;">
+                <a href="https://digitalbox-rentals.onrender.com/login" class="button">Jetzt einloggen</a>
+            </div>
+            <p style="margin-top: 30px;">Falls du Fragen hast, antworte einfach auf diese E-Mail.</p>
+            <p>Dein DigitalBox Team</p>
+        </div>
+        <div class="footer">
+            © 2024 DigitalBox. Alle Rechte vorbehalten.
+        </div>
+    </div>
+</body>
+</html>

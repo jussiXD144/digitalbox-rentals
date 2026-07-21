@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Abo bestätigt</title>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f3f4f6; color: #1f2937; margin: 0; padding: 40px; }
+        .container { max-width: 600px; margin: 0 auto; background-color: #ffffff; border-radius: 16px; overflow: hidden; box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1); }
+        .header { background: linear-gradient(135deg, #10b981 0%, #3b82f6 100%); padding: 40px 20px; text-align: center; }
+        .header h1 { color: #ffffff; margin: 0; font-size: 28px; font-weight: 800; }
+        .content { padding: 40px 30px; line-height: 1.6; }
+        .box-info { background-color: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 20px; margin: 20px 0; text-align: center; }
+        .box-name { font-size: 24px; font-weight: 800; color: #0f172a; text-transform: capitalize; }
+        .button { display: inline-block; background-color: #2563eb; color: #ffffff; padding: 14px 28px; text-decoration: none; border-radius: 8px; font-weight: bold; margin-top: 20px; }
+        .footer { background-color: #f9fafb; padding: 20px; text-align: center; color: #6b7280; font-size: 14px; border-top: 1px solid #e5e7eb; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Deine Box ist startklar! 📦</h1>
+        </div>
+        <div class="content">
+            <p>Hallo {{ email }},</p>
+            <p>vielen Dank für dein Vertrauen! Deine Zahlung war erfolgreich und wir haben sofort im Hintergrund einen exklusiven S3-Bucket bei Backblaze für dich hochgefahren.</p>
+            
+            <div class="box-info">
+                <div class="box-name">{{ plan_name }}-Box</div>
+                <p style="margin: 10px 0 0 0; color: #64748b;">
+                    {% if has_crypto %} Inklusive Crypto/Media Add-on {% else %} Standard Edition {% endif %}
+                </p>
+            </div>
+            
+            <p>Ab sofort kannst du Dateien hochladen. Gehe einfach auf dein Dashboard:</p>
+            
+            <div style="text-align: center;">
+                <a href="https://digitalbox-rentals.onrender.com/dashboard" class="button">Zum Dashboard</a>
+            </div>
+            
+            <p style="margin-top: 30px;">Viel Spaß beim Speichern!</p>
+            <p>Dein DigitalBox Team</p>
+        </div>
+        <div class="footer">
+            © 2024 DigitalBox. Alle Rechte vorbehalten.
+        </div>
+    </div>
+</body>
+</html>

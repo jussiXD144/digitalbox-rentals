@@ -1,10 +1,11 @@
 import os
 import stripe
-from fastapi import APIRouter, Request, Depends, HTTPException
+from fastapi import APIRouter, Request, Depends, HTTPException, BackgroundTasks
 from sqlalchemy.orm import Session
 from database import get_db
 from models import User, Subscription, DigitalBox
 from dotenv import load_dotenv
+from services.email_service import send_subscription_email
 
 load_dotenv()
 
@@ -14,7 +15,7 @@ endpoint_secret = os.getenv("STRIPE_WEBHOOK_SECRET")
 router = APIRouter(prefix="/webhooks", tags=["webhooks"])
 
 @router.post("/stripe")
-async def stripe_webhook(request: Request, db: Session = Depends(get_db)):
+async def stripe_webhook(request: Request, background_tasks: BackgroundTasks, db: Session = Depends(get_db)):
     payload = await request.body()
     sig_header = request.headers.get("stripe-signature")
 
@@ -34,7 +35,7 @@ async def stripe_webhook(request: Request, db: Session = Depends(get_db)):
 
     if event['type'] == 'checkout.session.completed':
         session = event['data']['object']
-        await handle_checkout_session(session, db)
+        await handle_checkout_session(session, db, background_tasks)
     elif event['type'] == 'customer.subscription.deleted':
         subscription = event['data']['object']
         await handle_subscription_deleted(subscription, db)
@@ -44,7 +45,7 @@ async def stripe_webhook(request: Request, db: Session = Depends(get_db)):
     
     return {"status": "success"}
 
-async def handle_checkout_session(session: dict, db: Session):
+async def handle_checkout_session(session: dict, db: Session, background_tasks: BackgroundTasks = None):
     user_id_str = session.get("client_reference_id")
     subscription_id = session.get("subscription")
     plan_id = session.get("metadata", {}).get("plan_id", "mini")
@@ -88,6 +89,10 @@ async def handle_checkout_session(session: dict, db: Session):
         )
         db.add(box)
         db.commit()
+        
+    if user and background_tasks:
+        background_tasks.add_task(send_subscription_email, user.email, plan_id, has_crypto_addon)
+
 
 async def handle_subscription_updated(subscription, db: Session):
     sub_id = subscription.get('id')
