@@ -21,12 +21,19 @@
             <div class="w-8 h-8 rounded bg-gradient-to-br from-blue-500 to-emerald-400 flex items-center justify-center font-bold text-lg">D</div>
             <h1 class="text-xl font-extrabold tracking-tight">DigitalBox</h1>
         </div>
-        <nav>
+        <nav class="flex items-center">
+            <select onchange="window.location.href='/set-lang?lang=' + this.value + '&redirect_to=' + window.location.pathname" class="bg-gray-800 text-white text-sm rounded border border-gray-700 px-2 py-1 mr-4 focus:outline-none">
+                <option value="en" {% if lang == 'en' %}selected{% endif %}>🇬🇧 EN</option>
+                <option value="de" {% if lang == 'de' %}selected{% endif %}>🇩🇪 DE</option>
+                <option value="es" {% if lang == 'es' %}selected{% endif %}>🇪🇸 ES</option>
+                <option value="fr" {% if lang == 'fr' %}selected{% endif %}>🇫🇷 FR</option>
+                <option value="it" {% if lang == 'it' %}selected{% endif %}>🇮🇹 IT</option>
+            </select>
             {% if user %}
-                <a href="/dashboard" class="text-sm font-semibold text-gray-300 hover:text-white mr-6">Dashboard</a>
-                <a href="/logout" class="text-sm font-semibold px-4 py-2 rounded border border-gray-700 hover:bg-gray-800 transition">Logout</a>
+                <a href="/dashboard" class="text-sm font-semibold text-gray-300 hover:text-white mr-6">{{ t('nav.dashboard') }}</a>
+                <a href="/logout" class="text-sm font-semibold px-4 py-2 rounded border border-gray-700 hover:bg-gray-800 transition">{{ t('nav.logout') }}</a>
             {% else %}
-                <a href="/login" class="text-sm font-semibold px-4 py-2 rounded bg-blue-600 hover:bg-blue-500 transition shadow-lg shadow-blue-500/30">Login / Signup</a>
+                <a href="/login" class="text-sm font-semibold px-4 py-2 rounded bg-blue-600 hover:bg-blue-500 transition shadow-lg shadow-blue-500/30">{{ t('nav.login') }} / Signup</a>
             {% endif %}
         </nav>
     </header>
@@ -36,9 +43,9 @@
         <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-blue-600 rounded-full mix-blend-multiply filter blur-[128px] opacity-20 pointer-events-none"></div>
         <div class="absolute top-1/2 left-1/2 -translate-x-1/4 -translate-y-1/4 w-96 h-96 bg-emerald-600 rounded-full mix-blend-multiply filter blur-[128px] opacity-20 pointer-events-none"></div>
 
-        <h2 class="text-5xl md:text-7xl font-extrabold tracking-tight mb-6 relative z-10">Limitless Cloud Storage.</h2>
+        <h2 class="text-5xl md:text-7xl font-extrabold tracking-tight mb-6 relative z-10">{{ t('index.title') }}</h2>
         <p class="text-lg md:text-xl text-gray-400 max-w-2xl mb-12 relative z-10">
-            Dynamically expanding buckets on reliable S3-compatible infrastructure. Pay only for the extra gigabytes you actually use.
+            {{ t('index.subtitle') }}
         </p>
 
         <!-- Pricing Cards -->

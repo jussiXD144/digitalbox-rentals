@@ -26,8 +26,8 @@
             <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
         </a>
         <div class="text-center mb-10 mt-4">
-            <h2 class="text-3xl font-bold tracking-tight mb-2" x-text="mode === 'login' ? 'Welcome Back' : 'Create Account'"></h2>
-            <p class="text-gray-400 text-sm" x-text="mode === 'login' ? 'Enter your details to access your box.' : 'Sign up to rent your digital box.'"></p>
+            <h2 class="text-3xl font-bold tracking-tight mb-2" x-text="mode === 'login' ? '{{ t('login.title') }}' : '{{ t('login.register_btn') }}'"></h2>
+            <p class="text-gray-400 text-sm" x-text="mode === 'login' ? '{{ t('login.email') }} & {{ t('login.password') }}' : '{{ t('login.register_btn') }}'"></p>
         </div>
 
         <script>
@@ -45,40 +45,40 @@
         <!-- Login Form -->
         <form x-show="mode === 'login'" action="/login" method="POST" class="space-y-6">
             <div>
-                <label class="block text-sm font-medium text-gray-400 mb-2">Email Address</label>
+                <label class="block text-sm font-medium text-gray-400 mb-2">{{ t('login.email') }}</label>
                 <input type="email" name="email" required class="w-full bg-gray-800 border border-gray-700 rounded-xl px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-blue-500 transition">
             </div>
             <div>
-                <label class="block text-sm font-medium text-gray-400 mb-2">Password</label>
+                <label class="block text-sm font-medium text-gray-400 mb-2">{{ t('login.password') }}</label>
                 <input type="password" name="password" required class="w-full bg-gray-800 border border-gray-700 rounded-xl px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-blue-500 transition">
             </div>
             <div class="flex items-center">
                 <input type="checkbox" name="remember_me" id="remember_me" class="mr-2 accent-blue-500 w-4 h-4 rounded border-gray-600 bg-gray-700">
-                <label for="remember_me" class="text-sm text-gray-400 cursor-pointer hover:text-white transition">Angemeldet bleiben</label>
+                <label for="remember_me" class="text-sm text-gray-400 cursor-pointer hover:text-white transition">{{ t('login.remember_me') }}</label>
             </div>
-            <button type="submit" class="w-full bg-blue-500 hover:bg-blue-600 text-white font-semibold py-3 rounded-xl transition shadow-lg shadow-blue-500/30">Sign In</button>
+            <button type="submit" class="w-full bg-blue-500 hover:bg-blue-600 text-white font-semibold py-3 rounded-xl transition shadow-lg shadow-blue-500/30">{{ t('login.login_btn') }}</button>
         </form>
 
         <!-- Register Form -->
         <form x-show="mode === 'register'" action="/register" method="POST" class="space-y-6" style="display: none;">
             <div>
-                <label class="block text-sm font-medium text-gray-400 mb-2">Email Address</label>
+                <label class="block text-sm font-medium text-gray-400 mb-2">{{ t('login.email') }}</label>
                 <input type="email" name="email" required class="w-full bg-gray-800 border border-gray-700 rounded-xl px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-blue-500 transition">
             </div>
             <div>
-                <label class="block text-sm font-medium text-gray-400 mb-2">Password</label>
+                <label class="block text-sm font-medium text-gray-400 mb-2">{{ t('login.password') }}</label>
                 <input type="password" name="password" required class="w-full bg-gray-800 border border-gray-700 rounded-xl px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-blue-500 transition">
             </div>
             <div class="flex items-center">
                 <input type="checkbox" name="remember_me" id="register_remember_me" class="mr-2 accent-emerald-500 w-4 h-4 rounded border-gray-600 bg-gray-700">
-                <label for="register_remember_me" class="text-sm text-gray-400 cursor-pointer hover:text-white transition">Angemeldet bleiben</label>
+                <label for="register_remember_me" class="text-sm text-gray-400 cursor-pointer hover:text-white transition">{{ t('login.remember_me') }}</label>
             </div>
-            <button type="submit" class="w-full bg-emerald-500 hover:bg-emerald-600 text-white font-semibold py-3 rounded-xl transition shadow-lg shadow-emerald-500/30">Create Account</button>
+            <button type="submit" class="w-full bg-emerald-500 hover:bg-emerald-600 text-white font-semibold py-3 rounded-xl transition shadow-lg shadow-emerald-500/30">{{ t('login.register_btn') }}</button>
         </form>
 
         <div class="mt-8 text-center text-sm text-gray-400">
-            <span x-show="mode === 'login'">Don't have an account? <button type="button" @click="mode = 'register'" class="text-blue-400 hover:underline">Sign up</button></span>
-            <span x-show="mode === 'register'" style="display: none;">Already have an account? <button type="button" @click="mode = 'login'" class="text-blue-400 hover:underline">Sign in</button></span>
+            <span x-show="mode === 'login'">{{ t('login.no_account') }} <button type="button" @click="mode = 'register'" class="text-blue-400 hover:underline">{{ t('login.register_btn') }}</button></span>
+            <span x-show="mode === 'register'" style="display: none;">{{ t('login.or') }} <button type="button" @click="mode = 'login'" class="text-blue-400 hover:underline">{{ t('login.login_btn') }}</button></span>
         </div>
     </div>
 </body>

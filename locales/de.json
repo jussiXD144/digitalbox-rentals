@@ -1,0 +1,53 @@
+{
+  "nav": {
+    "dashboard": "Dashboard",
+    "login": "Einloggen",
+    "logout": "Abmelden"
+  },
+  "index": {
+    "title": "Willkommen bei DigitalBox",
+    "subtitle": "Sicherer, schneller und extrem einfacher Cloud-Speicher für alle.",
+    "get_started": "Jetzt starten"
+  },
+  "login": {
+    "title": "Willkommen zurück",
+    "email": "E-Mail Adresse",
+    "password": "Passwort",
+    "login_btn": "Einloggen",
+    "remember_me": "Angemeldet bleiben",
+    "no_account": "Noch keinen Account?",
+    "register_btn": "Jetzt registrieren",
+    "or": "Oder"
+  },
+  "dashboard": {
+    "choose_title": "Wähle deine DigitalBox",
+    "choose_subtitle": "Wähle ein Abo, um deinen persönlichen S3-Bucket hochzufahren. Speicherplatz wächst automatisch mit.",
+    "mini_title": "Mini-Box",
+    "medi_title": "Medi-Box",
+    "maxi_title": "Maxi-Halle",
+    "included": "GB inklusive",
+    "thereafter": "Danach 0,02€/GB",
+    "per_month": "/mtl",
+    "subscribe": "Abonnieren",
+    "crypto_addon": "+ Krypto/Medien",
+    "current_plan": "Dein Tarif",
+    "active": "Aktiv",
+    "manage_sub": "Abo verwalten",
+    "included_limit": "GB inklusive",
+    "quota_exceeded": "Limit überschritten",
+    "extra_gb": "Du nutzt {gb} GB extra.",
+    "extra_cost": "Voraussichtliche Zusatzkosten:",
+    "storage_info": "Speicher-Details",
+    "bucket_path": "S3 Bucket Pfad",
+    "endpoint": "Endpunkt (B2)",
+    "your_files": "Deine Dateien",
+    "upload_btn": "Datei hochladen",
+    "uploading": "Lädt hoch...",
+    "drop_files": "Dateien hier ablegen",
+    "no_files": "Keine Dateien gefunden",
+    "drop_to_start": "Ziehe Dateien einfach hierher, um zu starten.",
+    "confirm_delete": "Wirklich löschen?",
+    "cancel": "Abbrechen",
+    "delete": "Löschen"
+  }
+}

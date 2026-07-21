@@ -1,0 +1,53 @@
+{
+  "nav": {
+    "dashboard": "Panel",
+    "login": "Iniciar sesión",
+    "logout": "Cerrar sesión"
+  },
+  "index": {
+    "title": "Bienvenido a DigitalBox",
+    "subtitle": "Almacenamiento en la nube seguro, rápido e increíblemente simple para todos.",
+    "get_started": "Empieza ahora"
+  },
+  "login": {
+    "title": "Bienvenido de nuevo",
+    "email": "Correo electrónico",
+    "password": "Contraseña",
+    "login_btn": "Iniciar sesión",
+    "remember_me": "Recuérdame",
+    "no_account": "¿No tienes una cuenta?",
+    "register_btn": "Regístrate ahora",
+    "or": "O"
+  },
+  "dashboard": {
+    "choose_title": "Elige tu DigitalBox",
+    "choose_subtitle": "Selecciona un plan a continuación para aprovisionar tu bucket S3 personal. El almacenamiento se expande automáticamente.",
+    "mini_title": "Caja Mini",
+    "medi_title": "Caja Medi",
+    "maxi_title": "Nave Maxi",
+    "included": "GB incluidos",
+    "thereafter": "Luego €0.02/GB",
+    "per_month": "/mes",
+    "subscribe": "Suscribirse",
+    "crypto_addon": "+ Cripto/Medios",
+    "current_plan": "Plan actual",
+    "active": "Activo",
+    "manage_sub": "Gestionar suscripción",
+    "included_limit": "GB Incluidos",
+    "quota_exceeded": "Cuota excedida",
+    "extra_gb": "Estás usando {gb} GB adicionales.",
+    "extra_cost": "Costo adicional estimado:",
+    "storage_info": "Información de almacenamiento",
+    "bucket_path": "Ruta del bucket S3",
+    "endpoint": "Punto de enlace (B2)",
+    "your_files": "Tus archivos",
+    "upload_btn": "Subir archivo",
+    "uploading": "Subiendo...",
+    "drop_files": "Suelta los archivos aquí",
+    "no_files": "No se encontraron archivos",
+    "drop_to_start": "Simplemente suelta los archivos aquí para comenzar.",
+    "confirm_delete": "¿Realmente eliminar?",
+    "cancel": "Cancelar",
+    "delete": "Eliminar"
+  }
+}

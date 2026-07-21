@@ -1,0 +1,53 @@
+{
+  "nav": {
+    "dashboard": "Tableau de bord",
+    "login": "Connexion",
+    "logout": "Déconnexion"
+  },
+  "index": {
+    "title": "Bienvenue sur DigitalBox",
+    "subtitle": "Stockage cloud sécurisé, rapide et incroyablement simple pour tous.",
+    "get_started": "Commencer maintenant"
+  },
+  "login": {
+    "title": "Bon retour",
+    "email": "Adresse e-mail",
+    "password": "Mot de passe",
+    "login_btn": "Se connecter",
+    "remember_me": "Se souvenir de moi",
+    "no_account": "Vous n'avez pas de compte ?",
+    "register_btn": "S'inscrire maintenant",
+    "or": "Ou"
+  },
+  "dashboard": {
+    "choose_title": "Choisissez votre DigitalBox",
+    "choose_subtitle": "Sélectionnez un plan ci-dessous pour créer votre bucket S3 personnel. Le stockage s'agrandit automatiquement.",
+    "mini_title": "Boîte Mini",
+    "medi_title": "Boîte Medi",
+    "maxi_title": "Halle Maxi",
+    "included": "Go inclus",
+    "thereafter": "Ensuite 0,02 €/Go",
+    "per_month": "/mois",
+    "subscribe": "S'abonner",
+    "crypto_addon": "+ Crypto/Médias",
+    "current_plan": "Plan actuel",
+    "active": "Actif",
+    "manage_sub": "Gérer l'abonnement",
+    "included_limit": "Go inclus",
+    "quota_exceeded": "Quota dépassé",
+    "extra_gb": "Vous utilisez {gb} Go en plus.",
+    "extra_cost": "Coût supplémentaire estimé :",
+    "storage_info": "Informations de stockage",
+    "bucket_path": "Chemin du bucket S3",
+    "endpoint": "Point de terminaison (B2)",
+    "your_files": "Vos fichiers",
+    "upload_btn": "Télécharger un fichier",
+    "uploading": "Téléchargement...",
+    "drop_files": "Déposez les fichiers ici",
+    "no_files": "Aucun fichier trouvé",
+    "drop_to_start": "Déposez simplement les fichiers ici pour commencer.",
+    "confirm_delete": "Vraiment supprimer ?",
+    "cancel": "Annuler",
+    "delete": "Supprimer"
+  }
+}

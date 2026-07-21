@@ -14,6 +14,7 @@ from auth import get_password_hash, verify_password, create_access_token, get_cu
 from routers import box, stripe_webhooks, cron, seo, admin
 from dotenv import load_dotenv
 from services.email_service import send_welcome_email
+from services.i18n import t as translate
 
 from apscheduler.schedulers.background import BackgroundScheduler
 from apscheduler.triggers.cron import CronTrigger
@@ -48,17 +49,37 @@ templates = Jinja2Templates(directory=os.path.join(current_dir, "templates"))
 stripe.api_key = os.getenv("STRIPE_SECRET_KEY")
 stripe.api_version = "2025-03-31.basil"
 
+def get_lang(request: Request):
+    return request.cookies.get("lang", "en")
+
+@app.get("/set-lang")
+async def set_lang(lang: str, redirect_to: str = "/"):
+    if lang not in ['en', 'de', 'es', 'fr', 'it']:
+        lang = 'en'
+    response = RedirectResponse(url=redirect_to, status_code=status.HTTP_302_FOUND)
+    response.set_cookie("lang", lang, max_age=365*24*60*60)
+    return response
+
 @app.get("/", response_class=HTMLResponse)
 async def read_root(request: Request, user: User = Depends(get_current_user_from_cookie)):
+    lang = get_lang(request)
     if user:
         return RedirectResponse(url="/dashboard", status_code=status.HTTP_302_FOUND)
-    return templates.TemplateResponse(request=request, name="index.html", context={"user": user})
+    return templates.TemplateResponse(request=request, name="index.html", context={
+        "user": user,
+        "lang": lang,
+        "t": lambda k: translate(k, lang)
+    })
 
 @app.get("/login", response_class=HTMLResponse)
 async def login_page(request: Request, user: User = Depends(get_current_user_from_cookie)):
+    lang = get_lang(request)
     if user:
         return RedirectResponse(url="/dashboard", status_code=status.HTTP_302_FOUND)
-    return templates.TemplateResponse(request=request, name="login.html", context={})
+    return templates.TemplateResponse(request=request, name="login.html", context={
+        "lang": lang,
+        "t": lambda k: translate(k, lang)
+    })
 
 @app.post("/login")
 async def login(response: Response, email: str = Form(...), password: str = Form(...), remember_me: bool = Form(False), db: Session = Depends(get_db)):
@@ -116,6 +137,7 @@ async def logout(response: Response):
 
 @app.get("/dashboard", response_class=HTMLResponse)
 async def dashboard(request: Request, db: Session = Depends(get_db), user: User = Depends(get_current_user_from_cookie)):
+    lang = get_lang(request)
     if not user:
         return RedirectResponse(url="/login")
     
@@ -137,7 +159,9 @@ async def dashboard(request: Request, db: Session = Depends(get_db), user: User 
         "has_active_box": has_active_box,
         "plan_name": plan_name,
         "included_gb": included_gb,
-        "has_crypto_addon": has_crypto_addon
+        "has_crypto_addon": has_crypto_addon,
+        "lang": lang,
+        "t": lambda k: translate(k, lang)
     })
 
 @app.post("/create-checkout-session")

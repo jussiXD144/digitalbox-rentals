@@ -1,0 +1,53 @@
+{
+  "nav": {
+    "dashboard": "Pannello",
+    "login": "Accedi",
+    "logout": "Esci"
+  },
+  "index": {
+    "title": "Benvenuto in DigitalBox",
+    "subtitle": "Archiviazione cloud sicura, veloce e incredibilmente semplice per tutti.",
+    "get_started": "Inizia ora"
+  },
+  "login": {
+    "title": "Bentornato",
+    "email": "Indirizzo e-mail",
+    "password": "Password",
+    "login_btn": "Accedi",
+    "remember_me": "Ricordami",
+    "no_account": "Non hai un account?",
+    "register_btn": "Registrati ora",
+    "or": "O"
+  },
+  "dashboard": {
+    "choose_title": "Scegli il tuo DigitalBox",
+    "choose_subtitle": "Seleziona un piano qui sotto per attivare il tuo bucket S3 personale. Lo spazio si espande automaticamente.",
+    "mini_title": "Scatola Mini",
+    "medi_title": "Scatola Medi",
+    "maxi_title": "Capannone Maxi",
+    "included": "GB inclusi",
+    "thereafter": "Poi €0.02/GB",
+    "per_month": "/mese",
+    "subscribe": "Abbonati",
+    "crypto_addon": "+ Cripto/Media",
+    "current_plan": "Piano attuale",
+    "active": "Attivo",
+    "manage_sub": "Gestisci abbonamento",
+    "included_limit": "GB Inclusi",
+    "quota_exceeded": "Quota superata",
+    "extra_gb": "Stai usando {gb} GB extra.",
+    "extra_cost": "Costo extra stimato:",
+    "storage_info": "Info archiviazione",
+    "bucket_path": "Percorso Bucket S3",
+    "endpoint": "Endpoint (B2)",
+    "your_files": "I tuoi file",
+    "upload_btn": "Carica file",
+    "uploading": "Caricamento...",
+    "drop_files": "Trascina i file qui",
+    "no_files": "Nessun file trovato",
+    "drop_to_start": "Trascina i file qui per iniziare.",
+    "confirm_delete": "Eliminare davvero?",
+    "cancel": "Annulla",
+    "delete": "Elimina"
+  }
+}

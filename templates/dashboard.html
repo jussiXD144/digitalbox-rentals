@@ -20,8 +20,15 @@
             <h1 class="text-xl font-extrabold tracking-tight">Dashboard</h1>
         </div>
         <div class="flex items-center space-x-4">
+            <select onchange="window.location.href='/set-lang?lang=' + this.value + '&redirect_to=' + window.location.pathname" class="bg-gray-800 text-white text-sm rounded border border-gray-700 px-2 py-1 mr-2 focus:outline-none">
+                <option value="en" {% if lang == 'en' %}selected{% endif %}>🇬🇧 EN</option>
+                <option value="de" {% if lang == 'de' %}selected{% endif %}>🇩🇪 DE</option>
+                <option value="es" {% if lang == 'es' %}selected{% endif %}>🇪🇸 ES</option>
+                <option value="fr" {% if lang == 'fr' %}selected{% endif %}>🇫🇷 FR</option>
+                <option value="it" {% if lang == 'it' %}selected{% endif %}>🇮🇹 IT</option>
+            </select>
             <span class="text-sm text-gray-400">{{ user.email }}</span>
-            <a href="/logout" class="text-sm font-semibold px-4 py-2 rounded bg-gray-800 hover:bg-gray-700 transition">Logout</a>
+            <a href="/logout" class="text-sm font-semibold px-4 py-2 rounded bg-gray-800 hover:bg-gray-700 transition">{{ t('nav.logout') }}</a>
         </div>
     </header>
 
@@ -34,56 +41,56 @@
 
         {% if not has_active_box %}
         <div class="text-center max-w-4xl mx-auto mt-10">
-            <h2 class="text-3xl font-extrabold text-white mb-4">Choose Your DigitalBox</h2>
-            <p class="text-gray-400 mb-10 max-w-xl mx-auto">Select a subscription plan below to provision your personal S3 bucket. Storage automatically expands as needed.</p>
+            <h2 class="text-3xl font-extrabold text-white mb-4">{{ t('dashboard.choose_title') }}</h2>
+            <p class="text-gray-400 mb-10 max-w-xl mx-auto">{{ t('dashboard.choose_subtitle') }}</p>
             
             <div class="grid md:grid-cols-3 gap-6 text-left">
                 <!-- Mini -->
                 <div class="bg-gray-800 rounded-2xl p-6 border border-gray-700 hover:border-gray-500 transition">
-                    <h3 class="font-bold text-white text-xl">Mini-Box</h3>
-                    <p class="text-sm text-emerald-400 mt-1 mb-4">20 GB inklusive</p>
-                    <p class="text-sm text-gray-400 mb-4">Danach 0,02€/GB</p>
+                    <h3 class="font-bold text-white text-xl">{{ t('dashboard.mini_title') }}</h3>
+                    <p class="text-sm text-emerald-400 mt-1 mb-4">20 {{ t('dashboard.included') }}</p>
+                    <p class="text-sm text-gray-400 mb-4">{{ t('dashboard.thereafter') }}</p>
                     <div class="mb-6">
-                        <span class="text-3xl font-extrabold text-white">€1.99</span><span class="text-sm text-gray-500">/mo</span>
+                        <span class="text-3xl font-extrabold text-white">€1.99</span><span class="text-sm text-gray-500">{{ t('dashboard.per_month') }}</span>
                     </div>
                     <form action="/create-checkout-session" method="POST">
                         <input type="hidden" name="plan_id" value="mini">
                         <label class="flex items-center text-sm text-gray-300 mb-4 cursor-pointer">
-                            <input type="checkbox" name="crypto_addon" class="mr-2 accent-blue-500"> + Crypto/Media (€1.50/mo)
+                            <input type="checkbox" name="crypto_addon" class="mr-2 accent-blue-500"> {{ t('dashboard.crypto_addon') }} (€1.50{{ t('dashboard.per_month') }})
                         </label>
-                        <button type="submit" class="w-full py-3 rounded-xl bg-gray-700 hover:bg-gray-600 text-white font-semibold transition">Abonnieren</button>
+                        <button type="submit" class="w-full py-3 rounded-xl bg-gray-700 hover:bg-gray-600 text-white font-semibold transition">{{ t('dashboard.subscribe') }}</button>
                     </form>
                 </div>
                 <!-- Medi -->
                 <div class="bg-gray-800 rounded-2xl p-6 border border-blue-500 shadow-xl shadow-blue-500/10 transform md:-translate-y-2">
-                    <h3 class="font-bold text-white text-xl">Medi-Box</h3>
-                    <p class="text-sm text-emerald-400 mt-1 mb-4">100 GB inklusive</p>
-                    <p class="text-sm text-gray-400 mb-4">Danach 0,02€/GB</p>
+                    <h3 class="font-bold text-white text-xl">{{ t('dashboard.medi_title') }}</h3>
+                    <p class="text-sm text-emerald-400 mt-1 mb-4">100 {{ t('dashboard.included') }}</p>
+                    <p class="text-sm text-gray-400 mb-4">{{ t('dashboard.thereafter') }}</p>
                     <div class="mb-6">
-                        <span class="text-3xl font-extrabold text-white">€3.49</span><span class="text-sm text-gray-500">/mo</span>
+                        <span class="text-3xl font-extrabold text-white">€3.49</span><span class="text-sm text-gray-500">{{ t('dashboard.per_month') }}</span>
                     </div>
                     <form action="/create-checkout-session" method="POST">
                         <input type="hidden" name="plan_id" value="medi">
                         <label class="flex items-center text-sm text-gray-300 mb-4 cursor-pointer">
-                            <input type="checkbox" name="crypto_addon" class="mr-2 accent-blue-500"> + Crypto/Media (€2.00/mo)
+                            <input type="checkbox" name="crypto_addon" class="mr-2 accent-blue-500"> {{ t('dashboard.crypto_addon') }} (€2.00{{ t('dashboard.per_month') }})
                         </label>
-                        <button type="submit" class="w-full py-3 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-semibold transition shadow-lg">Abonnieren</button>
+                        <button type="submit" class="w-full py-3 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-semibold transition shadow-lg">{{ t('dashboard.subscribe') }}</button>
                     </form>
                 </div>
                 <!-- Maxi -->
                 <div class="bg-gray-800 rounded-2xl p-6 border border-gray-700 hover:border-gray-500 transition">
-                    <h3 class="font-bold text-white text-xl">Maxi-Halle</h3>
-                    <p class="text-sm text-emerald-400 mt-1 mb-4">500 GB inklusive</p>
-                    <p class="text-sm text-gray-400 mb-4">Danach 0,02€/GB</p>
+                    <h3 class="font-bold text-white text-xl">{{ t('dashboard.maxi_title') }}</h3>
+                    <p class="text-sm text-emerald-400 mt-1 mb-4">500 {{ t('dashboard.included') }}</p>
+                    <p class="text-sm text-gray-400 mb-4">{{ t('dashboard.thereafter') }}</p>
                     <div class="mb-6">
-                        <span class="text-3xl font-extrabold text-white">€4.99</span><span class="text-sm text-gray-500">/mo</span>
+                        <span class="text-3xl font-extrabold text-white">€4.99</span><span class="text-sm text-gray-500">{{ t('dashboard.per_month') }}</span>
                     </div>
                     <form action="/create-checkout-session" method="POST">
                         <input type="hidden" name="plan_id" value="maxi">
                         <label class="flex items-center text-sm text-gray-300 mb-4 cursor-pointer">
-                            <input type="checkbox" name="crypto_addon" class="mr-2 accent-blue-500"> + Crypto/Media (€3.00/mo)
+                            <input type="checkbox" name="crypto_addon" class="mr-2 accent-blue-500"> {{ t('dashboard.crypto_addon') }} (€3.00{{ t('dashboard.per_month') }})
                         </label>
-                        <button type="submit" class="w-full py-3 rounded-xl bg-gray-700 hover:bg-gray-600 text-white font-semibold transition">Abonnieren</button>
+                        <button type="submit" class="w-full py-3 rounded-xl bg-gray-700 hover:bg-gray-600 text-white font-semibold transition">{{ t('dashboard.subscribe') }}</button>
                     </form>
                 </div>
             </div>
@@ -114,7 +121,7 @@
                 }">
                     <div class="flex justify-between items-start mb-4">
                         <div>
-                            <h3 class="text-gray-400 text-sm font-semibold uppercase tracking-wider mb-1">Current Plan</h3>
+                            <h3 class="text-gray-400 text-sm font-semibold uppercase tracking-wider mb-1">{{ t('dashboard.current_plan') }}</h3>
                             <p class="text-xl font-bold text-white capitalize">{{ plan_name }}-Box</p>
                         </div>
                         <div class="flex flex-col items-end space-y-2">
@@ -125,18 +132,18 @@
                                 </div>
                                 {% endif %}
                                 <div class="bg-emerald-500/20 border border-emerald-500/30 text-emerald-400 px-3 py-1 rounded-full text-xs font-bold">
-                                    Active
+                                    {{ t('dashboard.active') }}
                                 </div>
                             </div>
                             <form action="/create-portal-session" method="POST">
-                                <button type="submit" class="text-xs text-blue-400 hover:text-blue-300 underline font-medium transition">Abo verwalten</button>
+                                <button type="submit" class="text-xs text-blue-400 hover:text-blue-300 underline font-medium transition">{{ t('dashboard.manage_sub') }}</button>
                             </form>
                         </div>
                     </div>
                     
                     <div class="mt-6 mb-2 flex justify-between items-end">
                         <div class="text-3xl font-extrabold text-white" x-text="formatBytes(bytes)"></div>
-                        <div class="text-gray-400 text-sm font-medium">/ <span x-text="quotaGB"></span> GB Included</div>
+                        <div class="text-gray-400 text-sm font-medium">/ <span x-text="quotaGB"></span> {{ t('dashboard.included_limit') }}</div>
                     </div>
                     
                     <!-- Progress Bar -->
@@ -146,24 +153,24 @@
                     
                     <!-- Extra Costs Warning -->
                     <div x-show="extraGB > 0" class="mt-4 p-3 bg-red-500/10 border border-red-500/30 rounded-lg" style="display: none;">
-                        <p class="text-xs text-red-400 font-semibold mb-1">Quota Exceeded</p>
-                        <p class="text-sm text-gray-300">You are using <span class="text-white font-bold" x-text="extraGB.toFixed(2)"></span> GB extra.</p>
-                        <p class="text-sm text-gray-300">Estimated extra cost: <span class="text-red-400 font-bold">€<span x-text="extraCost"></span></span></p>
+                        <p class="text-xs text-red-400 font-semibold mb-1">{{ t('dashboard.quota_exceeded') }}</p>
+                        <p class="text-sm text-gray-300" x-text="`{{ t('dashboard.extra_gb') }}`.replace('{gb}', extraGB.toFixed(2))"></p>
+                        <p class="text-sm text-gray-300">{{ t('dashboard.extra_cost') }} <span class="text-red-400 font-bold">€<span x-text="extraCost"></span></span></p>
                     </div>
                 </div>
 
                 <!-- API Credentials Card -->
                 <div class="bg-gray-800 rounded-2xl p-6 border border-gray-700">
-                    <h3 class="text-gray-400 text-sm font-semibold uppercase tracking-wider mb-4">Storage Info</h3>
+                    <h3 class="text-gray-400 text-sm font-semibold uppercase tracking-wider mb-4">{{ t('dashboard.storage_info') }}</h3>
                     <div class="space-y-4 text-sm">
                         <div>
-                            <p class="text-gray-500 mb-1">S3 Bucket Path</p>
+                            <p class="text-gray-500 mb-1">{{ t('dashboard.bucket_path') }}</p>
                             <div class="bg-gray-900 p-2 rounded border border-gray-700 font-mono text-gray-300 break-all text-xs">
                                 {{ user.digitalbox.bucket_path }}
                             </div>
                         </div>
                         <div>
-                            <p class="text-gray-500 mb-1">Endpoint (B2)</p>
+                            <p class="text-gray-500 mb-1">{{ t('dashboard.endpoint') }}</p>
                             <div class="bg-gray-900 p-2 rounded border border-gray-700 font-mono text-gray-300 break-all text-xs">
                                 s3.eu-central-003.backblazeb2.com
                             </div>
@@ -186,21 +193,21 @@
                     <div x-show="isDragging" class="absolute inset-0 bg-blue-500/10 backdrop-blur-sm z-50 flex items-center justify-center border-2 border-blue-500 border-dashed rounded-2xl" style="display: none;">
                         <div class="text-center">
                             <svg class="w-16 h-16 text-blue-500 mx-auto mb-4 animate-bounce" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"></path></svg>
-                            <h2 class="text-2xl font-bold text-white">Dateien hier ablegen</h2>
+                            <h2 class="text-2xl font-bold text-white">{{ t('dashboard.drop_files') }}</h2>
                         </div>
                     </div>
 
                     <!-- Browser Header -->
                     <div class="p-4 border-b border-gray-700 flex justify-between items-center bg-gray-800/50">
-                        <h2 class="font-bold text-lg text-white">Your Files</h2>
+                        <h2 class="font-bold text-lg text-white">{{ t('dashboard.your_files') }}</h2>
                         
                         <!-- Upload Form -->
                         <form class="flex space-x-2">
                             <label class="cursor-pointer bg-blue-600 hover:bg-blue-500 text-white text-sm font-semibold py-2 px-4 rounded-lg transition border border-blue-500 shadow-lg shadow-blue-500/20 flex items-center space-x-2" :class="{'opacity-75 cursor-wait': uploading}">
                                 <svg x-show="!uploading" class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"></path></svg>
                                 <svg x-show="uploading" class="w-4 h-4 animate-spin" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
-                                <span x-show="!uploading">Datei hochladen</span>
-                                <span x-show="uploading">Lädt...</span>
+                                <span x-show="!uploading">{{ t('dashboard.upload_btn') }}</span>
+                                <span x-show="uploading">{{ t('dashboard.uploading') }}</span>
                                 <input type="file" x-ref="fileInput" @change="uploadFile($event.target.files)" class="hidden" multiple :disabled="uploading">
                             </label>
                         </form>
@@ -221,8 +228,8 @@
                         <!-- Empty State -->
                         <div x-show="!loading && files.length === 0" class="flex flex-col items-center justify-center h-full text-center" style="display: none;">
                             <svg class="w-16 h-16 text-gray-600 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4"></path></svg>
-                            <h3 class="text-xl font-bold text-gray-400">Keine Dateien gefunden</h3>
-                            <p class="text-gray-500 mt-2">Ziehe Dateien einfach hierher, um zu starten.</p>
+                            <h3 class="text-xl font-bold text-gray-400">{{ t('dashboard.no_files') }}</h3>
+                            <p class="text-gray-500 mt-2">{{ t('dashboard.drop_to_start') }}</p>
                         </div>
 
                         <!-- Files -->
@@ -232,10 +239,10 @@
                                     
                                     <!-- Deletion confirmation overlay -->
                                     <div x-show="file.confirmDelete" class="absolute inset-0 bg-red-900/90 backdrop-blur-sm rounded-lg flex items-center justify-between px-4 z-10" style="display: none;">
-                                        <span class="text-sm font-semibold text-white">Wirklich löschen?</span>
+                                        <span class="text-sm font-semibold text-white">{{ t('dashboard.confirm_delete') }}</span>
                                         <div class="flex space-x-2">
-                                            <button @click="file.confirmDelete = false" class="px-3 py-1 bg-gray-700 hover:bg-gray-600 rounded text-xs font-semibold text-white transition">Abbrechen</button>
-                                            <button @click="executeDelete(file.name)" class="px-3 py-1 bg-red-600 hover:bg-red-500 rounded text-xs font-semibold text-white transition shadow-lg shadow-red-500/30">Löschen</button>
+                                            <button @click="file.confirmDelete = false" class="px-3 py-1 bg-gray-700 hover:bg-gray-600 rounded text-xs font-semibold text-white transition">{{ t('dashboard.cancel') }}</button>
+                                            <button @click="executeDelete(file.name)" class="px-3 py-1 bg-red-600 hover:bg-red-500 rounded text-xs font-semibold text-white transition shadow-lg shadow-red-500/30">{{ t('dashboard.delete') }}</button>
                                         </div>
                                     </div>
 
@@ -350,7 +357,7 @@
                     formData.append('file', file);
                     
                     this.uploading = true;
-                    this.dispatchToast('info', `Lade ${file.name} hoch...`);
+                    this.dispatchToast('info', `{{ t('dashboard.uploading') }}`);
                     
                     try {
                         const res = await fetch('/box/upload', {
@@ -359,9 +366,9 @@
                         });
                         if (!res.ok) {
                             const err = await res.json();
-                            throw new Error(err.detail || 'Upload fehlgeschlagen');
+                            throw new Error(err.detail || 'Upload failed');
                         }
-                        this.dispatchToast('success', `${file.name} erfolgreich hochgeladen!`);
+                        this.dispatchToast('success', `${file.name} uploaded!`);
                         
                         setTimeout(() => { window.location.reload(); }, 1000);
                     } catch (e) {
@@ -375,15 +382,15 @@
                     const file = this.files.find(f => f.name === filename);
                     if(file) file.confirmDelete = false;
                     
-                    this.dispatchToast('info', `Lösche ${filename}...`);
+                    this.dispatchToast('info', `Deleting ${filename}...`);
                     
                     try {
                         const res = await fetch(`/box/files/${encodeURIComponent(filename)}`, {
                             method: 'DELETE'
                         });
-                        if (!res.ok) throw new Error('Löschen fehlgeschlagen');
+                        if (!res.ok) throw new Error('Delete failed');
                         
-                        this.dispatchToast('success', `${filename} wurde gelöscht.`);
+                        this.dispatchToast('success', `${filename} deleted.`);
                         setTimeout(() => { window.location.reload(); }, 1000);
                     } catch (e) {
                         this.dispatchToast('error', e.message);
