@@ -195,10 +195,13 @@
                         <h2 class="font-bold text-lg text-white">Your Files</h2>
                         
                         <!-- Upload Form -->
-                        <form @submit.prevent="uploadFile($refs.fileInput.files)" class="flex space-x-2">
-                            <label class="cursor-pointer bg-gray-700 hover:bg-gray-600 text-white text-sm font-semibold py-2 px-4 rounded-lg transition border border-gray-600 shadow-lg shadow-black/20">
-                                Browse...
-                                <input type="file" x-ref="fileInput" @change="uploadFile($event.target.files)" class="hidden" multiple>
+                        <form class="flex space-x-2">
+                            <label class="cursor-pointer bg-blue-600 hover:bg-blue-500 text-white text-sm font-semibold py-2 px-4 rounded-lg transition border border-blue-500 shadow-lg shadow-blue-500/20 flex items-center space-x-2" :class="{'opacity-75 cursor-wait': uploading}">
+                                <svg x-show="!uploading" class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"></path></svg>
+                                <svg x-show="uploading" class="w-4 h-4 animate-spin" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
+                                <span x-show="!uploading">Datei hochladen</span>
+                                <span x-show="uploading">Lädt...</span>
+                                <input type="file" x-ref="fileInput" @change="uploadFile($event.target.files)" class="hidden" multiple :disabled="uploading">
                             </label>
                         </form>
                     </div>
@@ -289,6 +292,7 @@
                 files: [],
                 loading: true,
                 isDragging: false,
+                uploading: false,
                 
                 init() {
                     this.fetchFiles();
@@ -345,6 +349,7 @@
                     const formData = new FormData();
                     formData.append('file', file);
                     
+                    this.uploading = true;
                     this.dispatchToast('info', `Lade ${file.name} hoch...`);
                     
                     try {
@@ -361,6 +366,8 @@
                         setTimeout(() => { window.location.reload(); }, 1000);
                     } catch (e) {
                         this.dispatchToast('error', e.message);
+                    } finally {
+                        this.uploading = false;
                     }
                 },
                 
