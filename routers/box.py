@@ -10,9 +10,13 @@ from auth import get_current_active_user
 router = APIRouter(prefix="/box", tags=["box"])
 
 def get_s3_client():
+    endpoint = os.getenv('AWS_ENDPOINT_URL', '')
+    if endpoint and not endpoint.startswith('http'):
+        endpoint = 'https://' + endpoint
+        
     return boto3.client(
         's3',
-        endpoint_url=os.getenv('AWS_ENDPOINT_URL'),
+        endpoint_url=endpoint,
         aws_access_key_id=os.getenv('AWS_ACCESS_KEY_ID'),
         aws_secret_access_key=os.getenv('AWS_SECRET_ACCESS_KEY')
     )
