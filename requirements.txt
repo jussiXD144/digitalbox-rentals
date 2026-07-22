@@ -17,3 +17,4 @@ openai
 psycopg2-binary
 twilio
 apscheduler
+aiofiles
