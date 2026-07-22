@@ -25,6 +25,7 @@ load_dotenv()
 Base.metadata.create_all(bind=engine)
 
 app = FastAPI(title="DigitalBox Rentals")
+app.mount("/static", StaticFiles(directory="static"), name="static")
 
 app.include_router(box.router)
 app.include_router(stripe_webhooks.router)

@@ -50,3 +50,9 @@ async def sitemap(request: Request, db: Session = Depends(get_db)):
     xml.append('</urlset>')
     
     return Response(content="\n".join(xml), media_type="application/xml")
+
+@router.get("/robots.txt", response_class=Response)
+async def robots(request: Request):
+    base_url = str(request.base_url).rstrip("/")
+    content = f"User-agent: *\nDisallow: /dashboard\nAllow: /\n\nSitemap: {base_url}/sitemap.xml"
+    return Response(content=content, media_type="text/plain")
