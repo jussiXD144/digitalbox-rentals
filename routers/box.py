@@ -78,7 +78,7 @@ async def upload_file(file: UploadFile = File(...), box: DigitalBox = Depends(ge
     return {"filename": file.filename, "message": "File uploaded successfully"}
 
 @router.get("/download/{filename}")
-async def download_file(filename: str, box: DigitalBox = Depends(get_active_box)):
+async def download_file(filename: str, inline: bool = False, box: DigitalBox = Depends(get_active_box)):
     s3 = get_s3_client()
     prefix = box.storage_path
     object_name = prefix + filename
@@ -86,10 +86,13 @@ async def download_file(filename: str, box: DigitalBox = Depends(get_active_box)
     try:
         s3.head_object(Bucket=BUCKET_NAME, Key=object_name)
         s3_response = s3.get_object(Bucket=BUCKET_NAME, Key=object_name)
+        
+        disposition = "inline" if inline else "attachment"
+        
         return StreamingResponse(
             s3_response['Body'], 
             media_type=s3_response['ContentType'],
-            headers={"Content-Disposition": f"attachment; filename={filename}"}
+            headers={"Content-Disposition": f'{disposition}; filename="{filename}"'}
         )
     except s3.exceptions.ClientError as e:
         if e.response['Error']['Code'] == "404":
